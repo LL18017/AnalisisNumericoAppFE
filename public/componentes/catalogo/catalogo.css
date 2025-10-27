@@ -1,0 +1,167 @@
+/* ============================= */
+/* Tipografía y colores generales */
+/* ============================= */
+h1,
+h2,
+li {
+  color: var(--color--oscuro);
+}
+
+th,
+tr,
+span {
+  color: var(--color--oscuro);
+}
+
+label {
+  color: var(--color--oscuro);
+
+}
+
+/* ============================= */
+/* Contenedores principales      */
+/* ============================= */
+.catalogoContainer,
+.cuentasContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================= */
+/* Tabla de cuentas              */
+/* ============================= */
+.tabla-cuentas {
+  width: 500px;
+  border-collapse: collapse;
+  /* importante para manejar bordes */
+  border: 2px solid var(--color--oscuro);
+  /* borde exterior */
+}
+
+.tabla-cuentas td,
+.tabla-cuentas th {
+  border: none;
+  /* quitar bordes internos */
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tabla-cuentas th {
+  background-color: var(--color--claro);
+  font-weight: bold;
+}
+
+/* Hover sobre filas */
+.tabla-cuentas tbody tr:hover {
+  background-color: #d3d3d3;
+  /* gris claro */
+  cursor: pointer;
+}
+
+/* ============================= */
+/* Input de búsqueda             */
+/* ============================= */
+#buscar {
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  width: 500px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* ============================= */
+/* Modal                         */
+/* ============================= */
+.modal {
+  display: none;
+  /* oculto por defecto */
+  flex-wrap: wrap;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--color--claro);
+  padding: 10px;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 800px;
+}
+
+.modal-content .inputsContainer {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+  gap: 8px;
+}
+
+#modal-nombre {
+  /* width: 150px; */
+}
+
+.cerrar {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* btns                         */
+/* ============================= */
+
+.btnContainer {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+#guardar {
+  margin: 12px;
+  display: none;
+}
+
+.referencias {
+  width: 100%;
+  display: grid;
+  grid-column: 3/ span 2;
+  grid-template-columns: 1fr 2fr;
+  position: relative;
+}
+
+.referencias ul {
+  position: absolute;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  top: 100%;
+  /* justo debajo del input */
+  max-height: 100px;
+  overflow-y: scroll;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  /* necesario para que top funcione */
+}
+
+
+.li {
+  padding: 6px;
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: #eaeaea;
+}

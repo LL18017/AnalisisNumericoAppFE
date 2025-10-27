@@ -1,0 +1,67 @@
+label,
+h1,
+h2,
+p {
+  color: black;
+}
+
+.formulario-estados {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 400px;
+  background-color: #f8f9fa;
+}
+
+
+.formulario-estados label {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.formulario-estados select,
+.formulario-estados input {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+.btn_estados {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: var(--color--principal);
+  ;
+  color: var(--color--claro);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  transition: transform 0.3s ease;
+}
+
+.btn_estados:hover {
+  background-color: var(--color--secundario);
+  transform: scale(1.15);
+}
+
+balance-general,
+estado-resultados,
+balance-general-analisi-vertical,
+estado-resultados-analisi-vertical {
+  display: none;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn_estados {
+  display: none;
+  margin: 10px auto;
+  font-size: 18px;
+}

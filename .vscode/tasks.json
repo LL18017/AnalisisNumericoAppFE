@@ -1,0 +1,36 @@
+{
+   
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label":"lanzar-browser",
+        "type": "shell",
+        "isBackground": true,
+       "command": "browser-sync start --server ./src -f \"**/*\" ./src --no-open",
+  
+        },
+        {
+          "label":"lanzar-mocha",
+          "type": "shell",
+          "isBackground": true,
+          "command":"browser-sync start --server ./ -f \"**/*\" ./ --no-open"
+    
+          }, 
+        {
+          "label":"detener-browser",
+          "type": "shell",
+          "command":"echo ${input:terminate}",
+          "problemMatcher":[]
+          },
+
+    ],
+    "inputs": [
+      {
+        "id": "terminate",
+        "type": "command",
+        "command": "workbench.action.task.terminate",
+        "args":"terminateAll"
+      }
+    ]
+  }
+  

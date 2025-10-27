@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Numerico App</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <nav-bar></nav-bar>
+    <catalogo-cuentas id="catalogo-cuentas"></catalogo-cuentas>
+    <estados-financieros id="estados-financieros"></estados-financieros>
+    <registros-cuenta id="registros-cuenta"></registros-cuenta>
+    <ratios-financieros id="ratios-financieros"></ratios-financieros>
+    <notificacion-toast id="notificador"></notificacion-toast>
+    <app-controller style="display: none;"></app-controller>
+    <script type="module" src="./componentes/notificaiones/NotificacionToast.js"></script>
+    <script type="module" src="./componentes/navbar/navbar.js"></script>
+    <script type="module" src="./componentes/catalogo/Catalogo.js"></script>
+    <script type="module" src="./componentes/estadosFinancieros/EstadosFinancieros.js"></script>
+    <script type="module" src="./componentes/Registros/Registros.js"></script>
+    <script type="module" src="./componentes/ratios/Ratios.js"></script>
+    <script type="module" src="./componentes/Balance/Balance.js"></script>
+    <script type="module" src="./componentes/BalanceAnalisisVertical/BalanceAnalisisVertical.js"></script>
+    <script type="module" src="./componentes/EstadoResultados/EstadoResultados.js"></script>
+    <script src="./js/AppController.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+
+</body>
+
+</html>

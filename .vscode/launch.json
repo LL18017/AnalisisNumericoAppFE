@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "lanzar frontend brave",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/src",
+            "preLaunchTask": "lanzar-browser",
+            "postDebugTask": "detener-browser",
+            "runtimeExecutable": "/usr/bin/brave-browser"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "lanzar mocha",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/",
+            "preLaunchTask": "lanzar-mocha",
+            "postDebugTask": "detener-mocha",
+            "runtimeExecutable": "/usr/bin/brave-browser"
+        }
+    ]
+} 

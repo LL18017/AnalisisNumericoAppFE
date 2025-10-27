@@ -1,0 +1,69 @@
+:root {
+  --color--principal: #0c229c;
+  --color--secundario: #0a0849;
+  /* --color--principal: #c00000;
+  --color--secundario: #810909; */
+  --color--fondo: #fffcffcd;
+  --color--oscuro: #020202;
+  --color--claro: #fffcff;
+  --fuente-texto: 20px;
+  --fuente-texto-pequenio: 10px;
+  --fuente-titulo: 40px;
+  --fuente-sub-titulo: 30px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+p {
+  color: var(--color--oscuro);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* background-image: url('./assets/fondoPepsico.png'); */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  color: var(--color--claro);
+}
+
+.btn {
+  color: white;
+  background-color: var(--color--principal);
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+}
+
+.btn:hover {
+  background-color: var(--color--secundario);
+  transform: scale(1.1);
+  transition: all 0.5s ease-in-out;
+}
+
+nav-bar {
+  width: 100%;
+}
+
+catalogo-cuentas {
+  margin-top: 40px;
+}
+
+estados-financieros {
+  margin-top: 40px;
+}

@@ -1,0 +1,48 @@
+export default class RegistroAccess {
+    constructor(baseURL = "/api/registros") {
+        this.baseURL = baseURL;
+    }
+
+    // Crear un registro
+    createData(datos) {
+        return fetch(this.baseURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+        });
+    }
+
+    // Obtener registro por idRegistro
+    getDataById(id) {
+        return fetch(`${this.baseURL}/${id}`);
+    }
+
+    // Obtener registro por idCuentaContable y año
+    getDataByNombreAndAnio(idcuenta, anio) {
+        return fetch(`${this.baseURL}/buscar?idcuenta=${idcuenta}&anio=${anio}`);
+    }
+
+    getDataCuentasDeBalance(anio) {
+        console.log("peticion " + `${this.baseURL}/balance?anio=${anio}`);
+
+        return fetch(`${this.baseURL}/balance?anio=${anio}`);
+    }
+
+    // Actualizar registro por id
+    async updateData(datos, id) {
+        console.log("📤 Enviando PUT:", `${this.baseURL}/${id}`, datos);
+        const response = await fetch(`${this.baseURL}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+        });
+        return response;
+    }
+
+    // Eliminar registro por id
+    deleteData(id) {
+        return fetch(`${this.baseURL}/${id}`, {
+            method: "DELETE"
+        });
+    }
+}
