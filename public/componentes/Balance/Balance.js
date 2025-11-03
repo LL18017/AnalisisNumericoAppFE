@@ -13,7 +13,6 @@ class Balance extends HTMLElement {
     this.render();
   }
 
-  // ⚠️ NO se modifica esta función
   async setCuentasDeBalancePorPeriodo(anio) {
     try {
       const response = await this.RegistroAccess.getDataCuentasDeBalance(anio);
@@ -21,8 +20,6 @@ class Balance extends HTMLElement {
       const data = await response.json();
 
       this.ListDeCuentas = data || [];
-      console.log(data);
-
       this.render();
     } catch (error) {
       console.error("Error cargando cuentas por periodo:", error);
@@ -39,7 +36,7 @@ class Balance extends HTMLElement {
       ${link}
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
-      <h2>Balance al 31 de diciembre de ${this.anio}</h2>
+      <h2>Balance al 31 de diciembre de ${this.anioPrincipal}</h2>
 
       <div class="balance-cuerpo">
         ${this.renderActivos()}
@@ -128,6 +125,75 @@ class Balance extends HTMLElement {
       const saldoNumerico = parseFloat(cuenta.saldo);
       return suma + (isNaN(saldoNumerico) ? 0 : saldoNumerico);
     }, 0);
+  }
+
+  getCss() {
+
+    return `
+              h1,
+        h2,
+        span,
+        th,
+        td,
+        p {
+            color: var(--color--oscuro);
+            text-align: center;
+        }
+
+        .tittle {
+            padding: 20px;
+            text-align: start;
+        }
+
+
+        .balance-cuerpo {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /* espacio entre filas y columnas */
+            width: 100%;
+            margin: 0 auto;
+            /* centra horizontalmente */
+        }
+
+        .balance-cuerpo>* {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .tabla-balance {
+            border-collapse: collapse;
+            width: auto;
+            table-layout: fixed;
+            /* asegura que las columnas tengan el mismo ancho */
+        }
+
+        .tabla-balance th,
+        .tabla-balance td {
+            padding: 8px;
+            text-align: left;
+            width: 100%;
+            height: 40px;
+            white-space: nowrap;
+        }
+
+        .activos {
+            order: 1;
+        }
+
+        .totalActivos {
+            order: 2;
+        }
+
+        .PasivosPatrimonio {
+            order: 3;
+        }
+
+        .totactPasivoPatrimonio {
+            order: 4;
+        }
+            `
   }
 
 }

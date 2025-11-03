@@ -1,0 +1,68 @@
+h1,
+h2,
+span,
+th,
+td,
+p {
+    color: var(--color--oscuro);
+    text-align: center;
+}
+
+.tittle {
+    padding: 20px;
+    text-align: start;
+}
+
+/* Contenedor principal */
+.balance-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.balance-cuerpo>* {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tablas */
+.tabla-balance {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    /* mantiene proporciones uniformes */
+}
+
+.tabla-balance th,
+.tabla-balance td {
+    padding: 8px;
+    text-align: left;
+    height: 40px;
+
+    /* 🔹 Permite salto de línea */
+    white-space: normal;
+    /* permite que el texto se divida */
+    word-wrap: break-word;
+    /* corta palabras largas si es necesario */
+    overflow-wrap: break-word;
+    /* soporte moderno */
+}
+
+/* Orden visual */
+.activos {
+    order: 1;
+}
+
+.totalActivos {
+    order: 2;
+}
+
+.PasivosPatrimonio {
+    order: 3;
+}
+
+.totactPasivoPatrimonio {
+    order: 4;
+}

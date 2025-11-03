@@ -242,7 +242,7 @@ class Registros extends HTMLElement {
         this._nombreCuentaSelecionada = "";
         this._idCuentaSelecionada = null;
         // this._anio = new Date().getFullYear();
-        this._anio = 2021;
+        this._anio = 2024;
         this._saldo = 0.0;
         this._idRegistro = null;
         this.cuentasFiltradas = [];

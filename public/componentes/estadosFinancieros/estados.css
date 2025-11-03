@@ -50,7 +50,10 @@ p {
 balance-general,
 estado-resultados,
 balance-general-analisi-vertical,
-estado-resultados-analisi-vertical {
+balance-general-analisi-horizontal,
+balance-usos-fuentes,
+estado-resultados-analisis-horizontal,
+estado-resultados-analisis-vertical {
   display: none;
 }
 

@@ -3,7 +3,8 @@ import RegistroAccess from "../../control/RegistrosAccess.js";
 import EstadoBase from "./EstadoDeResultaldoBase.js";
 
 
-class EstadoResultado extends EstadoBase {
+class EstadoResultadoHorizontal extends EstadoBase {
+
 
   render() {
     const link = html`
@@ -14,7 +15,7 @@ class EstadoResultado extends EstadoBase {
     const plantilla = html`
       ${link}
       <div class="pdf-container">
-        <h1>Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
+        <h1>Analisis Horizontalde Estado de Resultados al 31 de diciembre de ${this.anioPrincipal} y ${this.anioSecundario}</h1>
         <h2>Alutech S.A. de S.V.</h2>
         <div class="estado-cuerpo">
           ${this.renderCuerpo()}
@@ -36,7 +37,9 @@ class EstadoResultado extends EstadoBase {
         <thead>
           <tr>
             <th>Cuenta</th>
-            <th>Saldo</th>
+            <th>Saldo ${this.anioPrincipal}</th>
+            <th>Saldo ${this.anioSecundario}</th>
+            <th>Porcentaje</th>
           </tr>
         </thead>
         <tbody>
@@ -47,7 +50,9 @@ class EstadoResultado extends EstadoBase {
       return html`
               <tr class=${clase}>
                 <td>${cuenta.nombre_cuenta}</td>
-                <td>$ ${formato.format(cuenta.saldo ?? 0)}</td>
+                <td>$ ${formato.format(cuenta.saldo_anio1 ?? 0)}</td>
+                <td>$ ${formato.format(cuenta.saldo_anio2 ?? 0)}</td>
+                  <td>$ ${formato.format(this.getVariansa(cuenta.saldo_anio1, cuenta.saldo_anio2))} %</td >
               </tr>
             `;
     })}
@@ -56,8 +61,29 @@ class EstadoResultado extends EstadoBase {
     `;
   }
 
+  getVariansa(saldo_anio1, saldo_anio2) {
+    saldo_anio1 = Number(saldo_anio1)
+    saldo_anio2 = Number(saldo_anio2)
+    if (saldo_anio2 == 0) {
+      return -100
+    }
+    return ((saldo_anio1 / saldo_anio2) - 1) * 100
+
+  }
+
+  async setCuentasDeEstadoDeResultadoPorPeriodo(anioPrincipal, anioSecundario) {
+    try {
+      const response = await this.RegistroAccess.getDataCuentasDeEstadoDeResultadosComprativo(anioPrincipal, anioSecundario);
+      if (!response.ok) throw new Error("Error al obtener cuentas de estadoDeResultado");
+      const data = await response.json();
+      this.ListDeCuentas = data || [];
+      this.render();
+    } catch (error) {
+      console.error("Error cargando cuentas por periodo:", error);
+    }
+  }
 
 
 }
 
-customElements.define("estado-resultados", EstadoResultado);
+customElements.define("estado-resultados-analisis-horizontal", EstadoResultadoHorizontal);

@@ -1,61 +1,56 @@
 h1,
 h2,
-span,
 th,
-td,
-p {
+td {
     color: var(--color--oscuro);
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+h1,
+h2 {
     text-align: center;
 }
 
-.tittle {
-    padding: 20px;
-    text-align: start;
-}
 
-.main_text {}
-
-
-.balance-cuerpo {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    /* espacio entre filas y columnas */
+.pdf-container {
     width: 100%;
-    margin: 0 auto;
-    /* centra horizontalmente */
-    border: 1px solid black;
+    text-align: center;
 }
 
-.balance-cuerpo>* {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-
-.tabla-balance {
-    border-collapse: collapse;
-    width: auto;
-    table-layout: fixed;
-    /* asegura que las columnas tengan el mismo ancho */
+.estado-cuerpo {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .tabla-estado {
     border-collapse: collapse;
-    width: auto;
-    table-layout: fixed;
-    border: 1px solid var(--color--oscuro);
+    width: 80%;
+    font-family: sans-serif;
 }
 
 .tabla-estado th,
 .tabla-estado td {
-    padding: 8px;
-    text-align: left;
-    /* todo el texto alineado a la izquierda */
+    padding: 6px 10px;
+    border: none;
+    /* sin bordes */
 }
 
-.tabla-estado th:nth-child(2),
-.tabla-estado td:nth-child(2) {
-    /* tamaño fijo para columna de saldo */
-    /* los valores numéricos a la derecha */
+.tabla-estado th {
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 1px solid var(--color--oscuro);
+    /* solo línea separadora del header */
+}
+
+
+tr.negrita td {
+    font-weight: bold;
+}
+
+tbody tr:not(:last-child) td {
+    border-bottom: none;
+    /* sin líneas entre filas */
 }

@@ -3,7 +3,7 @@ import { pool } from "../db/connection.js";
 // 🟢 Obtener todas las cuentas
 export const getCuentas = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM cuenta ORDER BY idCuenta");
+    const result = await pool.query("SELECT * FROM cuenta ORDER BY codigo");
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });

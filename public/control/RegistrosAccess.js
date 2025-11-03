@@ -23,9 +23,21 @@ export default class RegistroAccess {
     }
 
     getDataCuentasDeBalance(anio) {
-        console.log("peticion " + `${this.baseURL}/balance?anio=${anio}`);
 
         return fetch(`${this.baseURL}/balance?anio=${anio}`);
+    }
+
+    getDataCuentasDeEstadoDeResultados(anio) {
+
+        return fetch(`${this.baseURL}/estadoResultado?anio=${anio}`);
+    }
+
+    getRegistrosBalanceComparativo(anioPrincipal, anioSecundario) {
+        return fetch(`${this.baseURL}/balanceComparativo?anio1=${anioPrincipal}&anio2=${anioSecundario}`);
+    }
+
+    getDataCuentasDeEstadoDeResultadosComprativo(anioPrincipal, anioSecundario) {
+        return fetch(`${this.baseURL}/estadoResultadoComparativo?anio1=${anioPrincipal}&anio2=${anioSecundario}`);
     }
 
     // Actualizar registro por id

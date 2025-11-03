@@ -7,7 +7,11 @@ class EstadosFinancieros extends HTMLElement {
     this.menuAbierto = false;
     this.balance = document.createElement("balance-general");
     this.balanceAnalisisVertical = document.createElement("balance-general-analisi-vertical");
+    this.balanceAnalisisHorizontal = document.createElement("balance-general-analisi-horizontal");
+    this.balanceUsosFuentes = document.createElement("balance-usos-fuentes");
     this.estadoResultados = document.createElement("estado-resultados");
+    this.estadoResultadosAnalisisVertical = document.createElement("estado-resultados-analisis-vertical");
+    this.estadoResultadosAnalisisHorizontal = document.createElement("estado-resultados-analisis-horizontal");
   }
 
   connectedCallback() {
@@ -29,26 +33,32 @@ class EstadosFinancieros extends HTMLElement {
 
       ${this.balance}
       ${this.balanceAnalisisVertical}
+      ${this.balanceAnalisisHorizontal}
+      ${this.balanceUsosFuentes}
       ${this.estadoResultados}
+      ${this.estadoResultadosAnalisisVertical}
+      ${this.estadoResultadosAnalisisHorizontal}
 
       <div class="formulario-estados">
         <h2>Generar Estado Financiero</h2>
         
         <label for="tipoEstado">Tipo de estado:</label>
         <select id="tipoEstado" @change=${(e) => this.toggleAnioSecundario(e)}>
-          <option value="reporte">Balance General (Reporte)</option>
-          <option value="cuenta">Balance General (Cuenta)</option>
+          <option value="reporte">Balance General</option>
           <option value="estado_resultado">Estado de Resultado</option>
           <option value="analisis_vertical_balance">Análisis Vertical Balance general</option>
-          <option value="analisis_horizontal">Análisis Horizontal</option>
+          <option value="analisis_vertical_Estado_Resultados">Análisis Vertical Estado de Resultados</option>
+          <option value="analisis_horizontal_balance">Análisis Horizontal Balance general</option>
+          <option value="analisis_horizontal_Estado_Resultados">Análisis Horizontal Estado de resultados</option>
+          <option value="balance_usos_fuente">Balance de usos y fuentes</option>
           <option value="balance_uso_aplicacion">Balance de Uso y Aplicación</option>
         </select>
 
         <label for="anioPrincipal">Año principal:</label>
-        <input type="number" id="anioPrincipal" min="1900" max="2100" placeholder="Ej. 2025" />
+        <input type="number" id="anioPrincipal" min="1900" max="2100" placeholder="Ej. 2025" value="2021" />
 
           <label id="labelAnioSecundario" for="anioSecundario" style="display:none;">Año secundario:</label>
-          <input type="number" id="anioSecundario" min="1900" max="2100" placeholder="Ej. 2024" style="display:none;"/>
+          <input type="number" id="anioSecundario" min="1900" max="2100" value="2020" placeholder="Ej. 2024" style="display:none;"/>
 
         <button class="btn" @click=${() => this.generarReporte()} id="generar">Generar</button>
       </div>
@@ -63,7 +73,10 @@ class EstadosFinancieros extends HTMLElement {
     const labelAnioSecundario = this._root.querySelector("#labelAnioSecundario");
     const inputAnioSecundario = this._root.querySelector("#anioSecundario");
     if (
-      tipo === "analisis_horizontal" ||
+      tipo === "analisis_horizontal_balance" ||
+      tipo === "analisis_horizontal_Estado_Resultados" ||
+
+      tipo === "balance_usos_fuente" ||
       tipo === "balance_uso_aplicacion"
     ) {
       labelAnioSecundario.style.display = "block";
@@ -87,44 +100,86 @@ class EstadosFinancieros extends HTMLElement {
 
     // Aquí puedes ajustar la lógica según el tipo de estado
     if (tipo === "estado_resultado") {
-      this.mostrarEstadoResultado(anioPrincipal);
+      this.mostrarEstadoDeResultados(tipo, anioPrincipal, anioSecundario, this.estadoResultados);
+    } else if (tipo === "analisis_vertical_Estado_Resultados") {
+      this.mostrarEstadoDeResultados(tipo, anioPrincipal, anioSecundario, this.estadoResultadosAnalisisVertical);
+    } else if (tipo === "analisis_horizontal_Estado_Resultados") {
+      this.mostrarEstadoDeResultados(tipo, anioPrincipal, anioSecundario, this.estadoResultadosAnalisisHorizontal);
     } else if (tipo === "analisis_vertical_balance") {
-      this.mostrarBalanceAnalisisVertical(tipo, anioPrincipal, anioSecundario);
+      this.mostrarBalance(tipo, anioPrincipal, anioSecundario, this.balanceAnalisisVertical);
+    } else if (tipo === "analisis_horizontal_balance") {
+      this.mostrarBalance(tipo, anioPrincipal, anioSecundario, this.balanceAnalisisHorizontal);
+    } else if (tipo === "balance_usos_fuente") {
+      this.mostrarBalance(tipo, anioPrincipal, anioSecundario, this.balanceUsosFuentes);
     } else if (tipo === "reporte") {
-      this.mostrarBalance(tipo, anioPrincipal, anioSecundario);
+      this.mostrarBalance(tipo, anioPrincipal, anioSecundario, this.balance);
     }
 
     this.actualizarElementosVisibles();
     this.noticadorHandle(`Generando estado financiero ${tipo} para ${anioPrincipal}`, "info");
   }
 
-  async mostrarBalance(tipo, anioPrincipal, anioSecundario) {
-    this.balance.tipo = tipo;
-    this.balance.style.display = "block";
-    this.balance.anioPrincipal = anioPrincipal;
-    this.balance.anioSecundario = anioSecundario;
-    console.log("anio es " + anioPrincipal);
 
-    await this.balance.setCuentasDeBalancePorPeriodo(anioPrincipal);
-    this.balance.render();
+
+  async mostrarBalance(tipo, anioPrincipal, anioSecundario, componente) {
+    if (!componente) {
+      console.error("Componente no definido para mostrarBalance");
+      return;
+    }
+
+    componente.tipo = tipo;
+    componente.style.display = "block";
+    componente.anioPrincipal = anioPrincipal;
+    componente.anioSecundario = anioSecundario;
+
+    // Lógica especial según tipo de análisis
+    if (typeof componente.setCuentasDeBalancePorPeriodo === "function") {
+      if (anioSecundario) {
+        await componente.setCuentasDeBalancePorPeriodo(anioPrincipal, anioSecundario);
+      } else {
+        await componente.setCuentasDeBalancePorPeriodo(anioPrincipal);
+      }
+    } else {
+      console.warn(`El componente ${tipo} no tiene el método setCuentasDeBalancePorPeriodo`);
+    }
+
+    if (typeof componente.render === "function") {
+      componente.render();
+    } else {
+      console.warn(`El componente ${tipo} no tiene el método render`);
+    }
   }
 
-  async mostrarBalanceAnalisisVertical(tipo, anioPrincipal, anioSecundario) {
-    this.balanceAnalisisVertical.tipo = tipo;
-    this.balanceAnalisisVertical.style.display = "block";
-    this.balanceAnalisisVertical.anioPrincipal = anioPrincipal;
-    this.balanceAnalisisVertical.anioSecundario = anioSecundario;
+  async mostrarEstadoDeResultados(tipo, anioPrincipal, anioSecundario, componente) {
+    if (!componente) {
+      console.error("Componente no definido para mostrarBalance");
+      return;
+    }
 
-    await this.balanceAnalisisVertical.setCuentasDeBalancePorPeriodo(anioPrincipal);
-    this.balanceAnalisisVertical.render();
+    componente.tipo = tipo;
+    componente.style.display = "block";
+    componente.anioPrincipal = anioPrincipal;
+    componente.anioSecundario = anioSecundario;
+
+    // Lógica especial según tipo de análisis
+    if (typeof componente.setCuentasDeEstadoDeResultadoPorPeriodo === "function") {
+      if (anioSecundario) {
+        await componente.setCuentasDeEstadoDeResultadoPorPeriodo(anioPrincipal, anioSecundario);
+      } else {
+        await componente.setCuentasDeEstadoDeResultadoPorPeriodo(anioPrincipal);
+      }
+    } else {
+      console.warn(`El componente ${tipo} no tiene el método setCuentasDeEstadoDeResultadoPorPeriodo`);
+    }
+
+    if (typeof componente.render === "function") {
+      componente.render();
+    } else {
+      console.warn(`El componente ${tipo} no tiene el método render`);
+    }
   }
 
-  mostrarEstadoResultado(anioPrincipal) {
-    this.estadoResultados.style.display = "block";
-    this.estadoResultados.anioPrincipal = anioPrincipal;
-    this.estadoResultados.setCuentasDeBalancePorPeriodo();
-    this.estadoResultados.render();
-  }
+
 
   actualizarElementosVisibles() {
     const formulario = this._root.querySelector(".formulario-estados");
@@ -146,19 +201,41 @@ class EstadosFinancieros extends HTMLElement {
     formulario.style.display = "flex";
     this.balance.style.display = "none";
     this.balanceAnalisisVertical.style.display = "none";
+    this.balanceAnalisisHorizontal.style.display = "none";
+    this.balanceUsosFuentes.style.display = "none";
     this.estadoResultados.style.display = "none";
+    this.estadoResultadosAnalisisVertical.style.display = "none";
+    this.estadoResultadosAnalisisHorizontal.style.display = "none";
   }
 
   async exportToPDF() {
     const tipo = this._root.querySelector("#tipoEstado").value;
+
     try {
-      let shadowRoot = this.balance.shadowRoot || this.balance._root;;
+      let shadowRoot;
+      let css = ""
+
       if (tipo === "reporte") {
         shadowRoot = this.balance.shadowRoot || this.balance._root;
-      } else if (tipo == "analisis_vertical_balance") {
+        css = this.balance.getCss()
+      } else if (tipo === "analisis_vertical_balance") {
         shadowRoot = this.balanceAnalisisVertical.shadowRoot || this.balanceAnalisisVertical._root;
-      } else {
-
+        css = this.balanceAnalisisVertical.getCss()
+      } else if (tipo === "analisis_horizontal_balance") {
+        shadowRoot = this.balanceAnalisisHorizontal.shadowRoot || this.balanceAnalisisHorizontal._root;
+        css = this.balanceAnalisisHorizontal.getCss()
+      } else if (tipo === "balance_usos_fuente") {
+        shadowRoot = this.balanceUsosFuentes.shadowRoot || this.balanceUsosFuentes._root;
+        css = this.balanceUsosFuentes.getCss()
+      } else if (tipo === "estado_resultado") {
+        shadowRoot = this.estadoResultados.shadowRoot || this.estadoResultados._root;
+        css = this.estadoResultados.getCss()
+      } else if (tipo === "analisis_vertical_Estado_Resultados") {
+        shadowRoot = this.estadoResultadosAnalisisVertical.shadowRoot || this.estadoResultadosAnalisisVertical._root;
+        css = this.estadoResultadosAnalisisVertical.getCss()
+      } else if (tipo === "analisis_horizontal_Estado_Resultados") {
+        shadowRoot = this.estadoResultadosAnalisisHorizontal.shadowRoot || this.estadoResultadosAnalisisHorizontal._root;
+        css = this.estadoResultadosAnalisisHorizontal.getCss()
       }
 
       if (!shadowRoot) {
@@ -167,83 +244,20 @@ class EstadosFinancieros extends HTMLElement {
       }
 
 
-
-      // Obtener el HTML del shadow DOM
+      // Obtenemos el HTML interno del shadow DOM
       const contenidoHTML = shadowRoot.innerHTML;
 
+      // Construimos el documento HTML completo para Puppeteer
       const html = `
       <html>
         <head>
           <meta charset="UTF-8">
           <title>${tipo}</title>
           <style>
-            h1,
-h2,
-span,
-th,
-td,
-p {
-    color: var(--color--oscuro);
-    text-align: center;
-}
-
-.tittle {
-    padding: 20px;
-    text-align: start;
-}
-
-
-.balance-cuerpo {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    /* espacio entre filas y columnas */
-    width: 100%;
-    margin: 0 auto;
-    /* centra horizontalmente */
-}
-
-.balance-cuerpo>* {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-
-.tabla-balance {
-    border-collapse: collapse;
-    width: auto;
-    table-layout: fixed;
-    /* asegura que las columnas tengan el mismo ancho */
-}
-
-.tabla-balance th,
-.tabla-balance td {
-    padding: 8px;
-    text-align: left;
-    width: 100%;
-    height: 40px;
-    white-space: nowrap;
-}
-
-.activos {
-    order: 1;
-}
-
-.totalActivos {
-    order: 2;
-}
-
-.PasivosPatrimonio {
-    order: 3;
-}
-
-.totactPasivoPatrimonio {
-    order: 4;
-} 
-
+            ${css}
           </style>
-          <link rel="stylesheet" href="./componentes/estadosFinancieros/estados.css">
           <link rel="stylesheet" href="./main.css">
+          <link rel="stylesheet" href="./componentes/estadosFinancieros/estados.css">
         </head>
         <body>
           <div id="wrapper">
@@ -253,6 +267,7 @@ p {
       </html>
     `;
 
+      // Enviamos el HTML al backend (endpoint Puppeteer)
       const response = await fetch(`/pdf/${tipo}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -263,6 +278,7 @@ p {
         throw new Error(`Error al generar el PDF: ${response.statusText}`);
       }
 
+      // Recibimos el PDF y lo descargamos
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 

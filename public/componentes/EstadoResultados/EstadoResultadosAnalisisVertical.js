@@ -5,6 +5,7 @@ import EstadoBase from "./EstadoDeResultaldoBase.js";
 
 class EstadoResultado extends EstadoBase {
 
+
   render() {
     const link = html`
       <link rel="stylesheet" href="./main.css" />
@@ -14,7 +15,7 @@ class EstadoResultado extends EstadoBase {
     const plantilla = html`
       ${link}
       <div class="pdf-container">
-        <h1>Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
+        <h1>Analisis de Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
         <h2>Alutech S.A. de S.V.</h2>
         <div class="estado-cuerpo">
           ${this.renderCuerpo()}
@@ -37,6 +38,7 @@ class EstadoResultado extends EstadoBase {
           <tr>
             <th>Cuenta</th>
             <th>Saldo</th>
+            <th>Porcentaje</th>
           </tr>
         </thead>
         <tbody>
@@ -44,10 +46,12 @@ class EstadoResultado extends EstadoBase {
       const esUtilidad = cuenta.nombre_cuenta.toLowerCase().startsWith("utilidad");
       const esUltima = index === this.ListDeCuentas.length - 1;
       const clase = esUtilidad || esUltima ? "negrita" : "";
+      const ingresoPorVenta = this.ListDeCuentas.find(c => c.nombre_cuenta === "ingresos por ventas").saldo;
       return html`
               <tr class=${clase}>
                 <td>${cuenta.nombre_cuenta}</td>
                 <td>$ ${formato.format(cuenta.saldo ?? 0)}</td>
+                <td>${formato.format((Number(cuenta.saldo) / Number(ingresoPorVenta)) * 100 ?? 0)} %</td>
               </tr>
             `;
     })}
@@ -60,4 +64,4 @@ class EstadoResultado extends EstadoBase {
 
 }
 
-customElements.define("estado-resultados", EstadoResultado);
+customElements.define("estado-resultados-analisis-vertical", EstadoResultado);
