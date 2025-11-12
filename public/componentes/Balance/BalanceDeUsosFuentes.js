@@ -15,11 +15,11 @@ class BalanceDeUsosFuentes extends BalanceBase {
             const data = await response.json();
 
             this.ListDeCuentas = data || [];
-            console.log(data);
 
             this.render();
         } catch (error) {
-            console.error("Error cargando cuentas por periodo:", error);
+            this.noticadorHandle(error, "danger")
+            this.ListDeCuentas = []
         }
     }
 
@@ -31,6 +31,80 @@ class BalanceDeUsosFuentes extends BalanceBase {
 
         const plantilla = html`
       ${link}
+      <style>
+
+               h1,
+      h2,
+      span,
+      th,
+      td,
+      p {
+          color: var(--color--oscuro);
+          text-align: center;
+      }
+      td,th{
+         text-align: left;
+         padding:0 8px;
+      }
+
+      .tittle {
+          padding: 20px;
+          text-align: start;
+      }
+
+
+      .balance-cuerpo {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          /* espacio entre filas y columnas */
+          width: 100%;
+          margin: 0 auto;
+          /* centra horizontalmente */
+      }
+
+      .balance-cuerpo>* {
+          max-width: 100%;
+          box-sizing: border-box;
+      }
+
+
+      .tabla-balance {
+          border-collapse: collapse;
+          width: auto;
+          table-layout: fixed;
+          /* asegura que las columnas tengan el mismo ancho */
+      }
+
+      .tabla-balance th,
+      .tabla-balance td {
+          padding: 8px;
+          text-align: left;
+          width: 100%;
+          height: 40px;
+          white-space: nowrap;
+      }
+
+      .activos {
+          order: 1;
+      }
+
+      .totalActivos {
+          order: 2;
+      }
+
+      .PasivosPatrimonio {
+          order: 3;
+      }
+
+      .totactPasivoPatrimonio {
+          order: 4;
+      }
+
+      .suma-total {
+          order: 5;
+      }
+      </style>
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
       <h2>Balance de usos y fuentes al 31 de diciembre de ${this.anioPrincipal} y ${this.anioSecundario}</h2>

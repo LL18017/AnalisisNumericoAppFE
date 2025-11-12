@@ -9,8 +9,7 @@ class Registros extends HTMLElement {
         this._root = this.attachShadow({ mode: "open" });
         this._nombreCuentaSelecionada = "";
         this._idCuentaSelecionada = null;
-        // this._anio = new Date().getFullYear(); // Por defecto año actual
-        this._anio = 2020;
+        this._anio = new Date().getFullYear(); // Por defecto año actual
         this._saldo = 0.0;
         this._idRegistro = null;
 
@@ -139,26 +138,28 @@ class Registros extends HTMLElement {
             saldo: this._saldo
         };
 
-        try {
+        const response = await this.RegistroAccess.createData(datos);
 
-            const response = await this.RegistroAccess.createData(datos);
-            if (response.ok) {
-                this.noticadorHandle("✅ Registro guardado correctamente", "success");
-                this.limpiarFormulario();
-            } else {
-                this.noticadorHandle("❌ Falló al registrar los datos", "error");
+        if (response.ok) {
+            this.noticadorHandle("Registro guardado correctamente", "success");
+            this.limpiarFormulario();
+        } else {
+            try {
+                const errorData = await response.json();
+                const mensaje = errorData.error || errorData.message || "❌ Error al guardar el registro.";
+                this.noticadorHandle(mensaje, "danger");
+            } catch (err) {
+                this.noticadorHandle("Error inesperado al procesar la respuesta del servidor.", "danger");
             }
-        } catch (error) {
-            console.error(error);
-            this.noticadorHandle("❌ Error al guardar registro", "error");
         }
+
     }
 
     async buscarRegistro() {
 
 
         if (!this._idCuentaSelecionada || !this._anio) {
-            this.noticadorHandle("❌ Debes seleccionar cuenta y año", "error");
+            this.noticadorHandle("Debes seleccionar cuenta y año", "danger");
             return;
         }
 
@@ -169,7 +170,10 @@ class Registros extends HTMLElement {
             );
 
             if (!response.ok) {
-                this.noticadorHandle("❌ Registro no encontrado", "error");
+                const errorData = await response.json();
+                const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";
+
+                this.noticadorHandle(mensaje, "danger");
                 return;
             }
 
@@ -178,17 +182,16 @@ class Registros extends HTMLElement {
             this._anio = data[0].anio;
             this._saldo = data[0].saldo;
             this._idRegistro = data[0].idregistro
-            this.noticadorHandle("✅ Registro encontrado", "success");
+            this.noticadorHandle("Registro encontrado", "success");
             this.render();
         } catch (error) {
-            console.error(error);
-            this.noticadorHandle("❌ Error al buscar registro", "error");
+            this.noticadorHandle(error, "danger");
         }
     }
 
     async actualizarRegistro() {
         if (!this._idRegistro) {
-            this.noticadorHandle("❌ Primero busca un registro", "error");
+            this.noticadorHandle("Primero busca un registro", "danger");
             return;
         }
 
@@ -206,34 +209,41 @@ class Registros extends HTMLElement {
         try {
             const response = await this.RegistroAccess.updateData(datos, this._idRegistro);
             if (response.ok) {
-                this.noticadorHandle("✅ Registro modificado correctamente", "success");
+                this.noticadorHandle("Registro modificado correctamente", "success");
                 this.limpiarFormulario();
             } else {
-                this.noticadorHandle("❌ Falló al modificar los datos", "error");
+                const errorData = await response.json();
+                const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";
+
+                this.noticadorHandle(mensaje, "danger");
+                return;
             }
         } catch (error) {
             console.error(error);
-            this.noticadorHandle("❌ Error al actualizar registro", "error");
+            this.noticadorHandle(error, "danger");
         }
     }
 
     async eliminarRegistro() {
         if (!this._idRegistro) {
-            this.noticadorHandle("❌ Primero busca un registro", "error");
+            this.noticadorHandle("Primero busca un registro", "danger");
             return;
         }
 
         try {
             const response = await this.RegistroAccess.deleteData(this._idRegistro);
             if (response.ok) {
-                this.noticadorHandle("✅ Registro eliminado correctamente", "success");
+                this.noticadorHandle("Registro eliminado correctamente", "success");
                 this.limpiarFormulario();
             } else {
-                this.noticadorHandle("❌ Falló al eliminar registro", "error");
+                const errorData = await response.json();
+                const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";
+
+                this.noticadorHandle(mensaje, "danger");
+                return;
             }
         } catch (error) {
-            console.error(error);
-            this.noticadorHandle("❌ Error al eliminar registro", "error");
+            this.noticadorHandle(error, "danger");
         }
     }
 
@@ -241,8 +251,7 @@ class Registros extends HTMLElement {
 
         this._nombreCuentaSelecionada = "";
         this._idCuentaSelecionada = null;
-        // this._anio = new Date().getFullYear();
-        this._anio = 2024;
+        this._anio = new Date().getFullYear();
         this._saldo = 0.0;
         this._idRegistro = null;
         this.cuentasFiltradas = [];

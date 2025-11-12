@@ -31,6 +31,10 @@ export default class RegistroAccess {
 
         return fetch(`${this.baseURL}/estadoResultado?anio=${anio}`);
     }
+    getDataCuentasDeRatios(anio) {
+
+        return fetch(`${this.baseURL}/ratios/cuentas?anio=${anio}`);
+    }
 
     getRegistrosBalanceComparativo(anioPrincipal, anioSecundario) {
         return fetch(`${this.baseURL}/balanceComparativo?anio1=${anioPrincipal}&anio2=${anioSecundario}`);

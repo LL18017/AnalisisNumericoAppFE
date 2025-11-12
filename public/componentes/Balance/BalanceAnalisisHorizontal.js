@@ -15,29 +15,114 @@ class BalanceAnalisisHorizontal extends BalanceBase {
       const data = await response.json();
 
       this.ListDeCuentas = data || [];
-      console.log(data);
 
       this.render();
     } catch (error) {
-      console.error("Error cargando cuentas por periodo:", error);
+      this.noticadorHandle(error, "danger")
+      this.ListDeCuentas = []
     }
   }
 
   render() {
     const link = html`
       <link rel="stylesheet" href="./main.css" />
-      <link rel="stylesheet" href="./componentes/Balance/balanceReporte.css" />
     `;
 
     const plantilla = html`
+      
       ${link}
+      <style>
+             h1,
+      h2,
+      span,
+      th,
+      td,
+      p {
+          color: var(--color--oscuro);
+          text-align: center;
+      }
+      td,th{
+         text-align: left;
+         padding:0 8px;
+      }
+
+      .tittle {
+          padding: 20px;
+          text-align: start;
+      }
+
+
+      .balance-cuerpo {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          /* espacio entre filas y columnas */
+          width: 100%;
+          margin: 0 auto;
+          /* centra horizontalmente */
+      }
+
+      .balance-cuerpo>* {
+          max-width: 100%;
+          box-sizing: border-box;
+      }
+
+
+      .tabla-balance {
+          border-collapse: collapse;
+          width: auto;
+          table-layout: fixed;
+          /* asegura que las columnas tengan el mismo ancho */
+      }
+
+      .tabla-balance th,
+      .tabla-balance td {
+          padding: 8px;
+          text-align: left;
+          width: 100%;
+          height: 40px;
+          white-space: nowrap;
+      }
+
+      .activos {
+          order: 1;
+      }
+
+      .totalActivos {
+          order: 2;
+      }
+
+      .PasivosPatrimonio {
+          order: 3;
+      }
+
+      .totactPasivoPatrimonio {
+          order: 4;
+      }
+
+      .suma-total {
+          order: 5;
+      }
+      </style>
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
       <h2>Analisis Horizontal para Balance al 31 de diciembre de ${this.anioPrincipal} y ${this.anioSecundario}</h2>
 
       <div class="balance-cuerpo">
-        ${this.renderActivos()}
-        ${this.renderPasivosPatrimonio()}
+        <table tabla-balance>
+          <thead >
+          <tr>
+            <th>Cuenta</th>
+            <th>Saldo ${this.anioPrincipal}</th>
+            <th>Saldo ${this.anioSecundario}</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.renderActivos()}
+          ${this.renderPasivosPatrimonio()}
+        </tbody>
+        </table>
       </div>
     `;
 
@@ -46,21 +131,22 @@ class BalanceAnalisisHorizontal extends BalanceBase {
 
   renderActivos() {
     const cuentasAC = this.getCuentasPorCodigo("1.1");
+    cuentasAC.unshift({ "nombre_cuenta": "Activo Corriente" })
+    cuentasAC.unshift({ "nombre_cuenta": "Activo" })
+
     const cuentasANC = this.getCuentasPorCodigo("1.2");
 
+    const total1 = this.getTotalAnio1(cuentasAC.concat(cuentasANC));
+    const total2 = this.getTotalAnio2(cuentasAC.concat(cuentasANC));
     cuentasANC.push({
       nombre_cuenta: "TOTAL ACTIVOS",
-      saldo_anio1: this.getTotalAnio1(cuentasAC.concat(...cuentasANC)),
-      saldo_anio2: this.getTotalAnio2(cuentasAC.concat(...cuentasANC)),
+      saldo_anio1: total1,
+      saldo_anio2: total2
     })
 
-
     return html`
-      <div class="activos">
-        <h1 class="tittle">Activos</h1>
-        ${this.renderTabla("Activo corriente", cuentasAC, null, true)}
-        ${this.renderTabla("Activo no corriente", cuentasANC, null, false, true)}
-      </div>
+        ${this.renderTabla("Activo corriente", cuentasAC, true, false)}
+        ${this.renderTabla("Activo no corriente", cuentasANC, false, true)}
     `;
   }
 
@@ -69,109 +155,107 @@ class BalanceAnalisisHorizontal extends BalanceBase {
     const cuentasPC = this.getCuentasPorCodigo("2.1");
     const cuentasPNC = this.getCuentasPorCodigo("2.2");
     const cuentasCap = this.getCuentasPorCodigo("3.");
+    const total1 = this.getTotalAnio1(cuentasPC
+      .concat(cuentasPNC).concat(cuentasCap));
+    const total2 = this.getTotalAnio2(cuentasPC
+      .concat(cuentasPNC).concat(cuentasCap));
 
-    let total = this.getTotal(cuentasPC.concat(...cuentasPNC))
+    cuentasPC.unshift({ "nombre_cuenta": "Pasivo Corriente" })
+    cuentasPC.unshift({ "nombre_cuenta": "Pasivo" })
+
+    cuentasPNC.unshift({ "nombre_cuenta": "Pasivo No Corriente" })
 
     cuentasPNC.push({
       nombre_cuenta: "TOTAL PASIVOS",
       saldo_anio1: this.getTotalAnio1(cuentasPC
         .concat(cuentasPNC)),
-
       saldo_anio2: this.getTotalAnio2(cuentasPC
-        .concat(cuentasPNC))
+        .concat(cuentasPNC)),
     })
 
-    total += this.getTotal(cuentasCap);
+    cuentasCap.unshift({ "nombre_cuenta": "Patrimonio" })
     cuentasCap.push({
-      nombre_cuenta: "TOTAL PASIVOS y PATRIMONIO",
-      saldo_anio1: this.getTotalAnio1(cuentasPC
-        .concat(cuentasPNC).concat(cuentasCap)),
-
-      saldo_anio2: this.getTotalAnio2(cuentasPC.concat(cuentasPNC).concat(cuentasCap))
-
+      nombre_cuenta: "TOTAL PASIVOS Y CAPITAL",
+      saldo_anio1: total1,
+      saldo_anio2: total2,
     })
 
 
     return html`
-      <div class="PasivosPatrimonio">
-        <div class="pasivo">
-          <h1 class="tittle">Pasivos</h1>
-          ${this.renderTabla("Pasivo corriente", cuentasPC)}
-          ${this.renderTabla("Pasivo no corriente", cuentasPNC, null, false, true)}
-        </div>
-        <div class="patrimonio">
-          <h1 class="tittle">Patrimonio</h1>
-          ${this.renderTabla("Capital", cuentasCap, null, false, true)}
-        </div>
-      </div>
+          ${this.renderTabla("Pasivo corriente", cuentasPC, false, false)}
+          ${this.renderTabla("Pasivo no corriente", cuentasPNC, false, true)}
+          ${this.renderTabla("Capital", cuentasCap, false, true)}
     `;
   }
 
-  // ---------- Render tabla simplificada ----------
-  renderTabla(titulo, cuentas, total, renderHeaders, renderTotal) {
+  renderTabla(titulo, cuentas, renderHeaders, renderTotal) {
     const formato = new Intl.NumberFormat("es-SV", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    const filaTotal = {
-      nombre_cuenta: `Total ${titulo}`,
-      saldo_anio1: this.getTotalAnio1(cuentas.slice(0, -1)),
-      saldo_anio2: this.getTotalAnio2(cuentas.slice(0, -1)),
+    // Crear objeto total
+    const TotalTitulo = {
+      nombre_cuenta: `TOTAL ${titulo}`
     };
 
-    // Si renderTotal es true → insertar antes del último
-    // Si no → insertar al final
+    let saldoTitulo1 = 0;
+    let saldoTitulo2 = 0;
+
     if (renderTotal) {
-      cuentas.splice(cuentas.length - 1, 0, filaTotal);
+      // 🔹 Si renderTotal es true → sumar todas menos la última
+      saldoTitulo1 = this.getTotalAnio1(cuentas.slice(0, -1));
+      saldoTitulo2 = this.getTotalAnio2(cuentas.slice(0, -1));
+      TotalTitulo.saldo_anio1 = saldoTitulo1;
+      TotalTitulo.saldo_anio2 = saldoTitulo2;
+
+      // Insertar antes del último elemento
+      cuentas.splice(cuentas.length - 1, 0, TotalTitulo);
     } else {
-      cuentas.push(filaTotal);
+      // 🔹 Si renderTotal es false → sumar todas las cuentas
+      saldoTitulo1 = this.getTotalAnio1(cuentas);
+      saldoTitulo2 = this.getTotalAnio2(cuentas);
+      TotalTitulo.saldo_anio1 = saldoTitulo1;
+      TotalTitulo.saldo_anio2 = saldoTitulo2;
+
+      // Agregar al final del array
+      cuentas.push(TotalTitulo);
     }
 
+    // 🔸 Renderizado
     return html`
-    <table class="tabla-balance">
-      ${renderHeaders ? html`
-        <thead>
-          <tr>
-            <th>Cuenta</th>
-            <th>Saldo ${this.anioPrincipal}</th>
-            <th>Saldo ${this.anioSecundario}</th>
-            <th>Porcentaje</th>
-          </tr>
-        </thead>
-      ` : null}
-
-      <tbody>
-        <tr>
-          <td>${titulo}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-
         ${cuentas.map((cuenta, index) => {
-      const esUltimo = index === cuentas.length - 1;
-      const esPenultimo = index === cuentas.length - 2;
-
-      // Si renderTotal → penúltimo y último en negrita
-      // Si no → solo el último
-      const enNegrita = renderTotal ? (esUltimo || esPenultimo) : esUltimo;
+      // Determinar si va en negrita
+      const esNegritaBase = renderHeaders ? index < 2 : index < 1;
+      const contieneTotal = cuenta.nombre_cuenta?.toLowerCase().includes("total");
+      const estilo = (esNegritaBase || contieneTotal)
+        ? "font-weight: bold;"
+        : "";
 
       return html`
-            <tr style=${enNegrita ? 'font-weight: bold;' : ''}>
-              <td>${cuenta.nombre_cuenta}</td>
-              <td>$ ${formato.format(Number(cuenta.saldo_anio1) || 0)}</td>
-              <td>$ ${formato.format(Number(cuenta.saldo_anio2) || 0)}</td>
-              <td>$ ${formato.format(this.getVariansa(cuenta.saldo_anio1, cuenta.saldo_anio2))} %</td >
-            </tr >
-        `;
+            <tr>
+              <td style=${estilo}>${cuenta.nombre_cuenta}</td>
+              <td style=${estilo}>
+                ${cuenta.saldo_anio1 == null ? "" : `$ ${formato.format(cuenta.saldo_anio1)}`}
+              </td>
+              <td style=${estilo}>
+                ${cuenta.saldo_anio2 == null ? "" : `$ ${formato.format(cuenta.saldo_anio2)}`}
+              </td>
+              <td style=${estilo}>
+                  ${this.getVariansa(cuenta.saldo_anio1, cuenta.saldo_anio2) === "" ? "" :
+          `${formato.format(this.getVariansa(cuenta.saldo_anio1, cuenta.saldo_anio2))} %  `} 
+              </td>
+            </tr>
+          `;
     })}
-      </tbody>
-    </table>
   `;
   }
 
+
   getVariansa(saldo_anio1, saldo_anio2) {
+    if (saldo_anio1 == null && saldo_anio2 == null) {
+      return ""
+    }
     saldo_anio1 = Number(saldo_anio1)
     saldo_anio2 = Number(saldo_anio2)
     if (saldo_anio2 == 0) {

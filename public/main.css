@@ -1,5 +1,5 @@
 :root {
-  --color--principal: #0c229c;
+  --color--principal: #060d71;
   --color--secundario: #0a0849;
   /* --color--principal: #c00000;
   --color--secundario: #810909; */
@@ -65,5 +65,9 @@ catalogo-cuentas {
 }
 
 estados-financieros {
+  margin-top: 40px;
+}
+
+indicadores-financieros {
   margin-top: 40px;
 }

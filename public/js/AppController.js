@@ -12,12 +12,14 @@ class AppController extends HTMLElement {
     this.ratiosFinancieros = document.getElementById("ratios-financieros");
     this.registros = document.getElementById("registros-cuenta");
     this.notificador = document.getElementById("notificador");
+    this.bienvenida = document.getElementById("bienvenida");
 
     this.listaComponentes = [
       this.catalogoCuentas,
       this.estadosFinancieros,
       this.ratiosFinancieros,
-      this.registros
+      this.registros,
+      this.bienvenida
 
     ];
 
@@ -35,6 +37,7 @@ class AppController extends HTMLElement {
 
     document.addEventListener("inicioClick", () => {
       this.desaparecerElementos(this.listaComponentes, [
+        this.bienvenida
       ]);
     });
 
@@ -44,7 +47,7 @@ class AppController extends HTMLElement {
       ]);
     })
 
-    document.addEventListener("RatiosFinancierosClick", () => {
+    document.addEventListener("indicadoresFinancierosClick", () => {
       this.desaparecerElementos(this.listaComponentes, [
         this.ratiosFinancieros
       ]);

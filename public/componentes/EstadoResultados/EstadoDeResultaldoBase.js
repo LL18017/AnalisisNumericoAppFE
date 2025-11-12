@@ -21,34 +21,8 @@ class EstadoBase extends HTMLElement {
 
     const plantilla = html`
       ${link}
-      <div class="pdf-container">
-        <h1>Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
-        <h2>Alutech S.A. de S.V.</h2>
-        <div class="estado-cuerpo">
-          ${this.renderCuerpo()}
-        </div>
-      </div>
-    `;
-
-    render(plantilla, this._root);
-  }
-
-
-  async setCuentasDeEstadoDeResultadoPorPeriodo(anio) {
-    try {
-      const response = await this.RegistroAccess.getDataCuentasDeEstadoDeResultados(anio);
-      if (!response.ok) throw new Error("Error al obtener cuentas de estadoDeResultado");
-      const data = await response.json();
-      this.ListDeCuentas = data || [];
-      this.render();
-    } catch (error) {
-      console.error("Error cargando cuentas por periodo:", error);
-    }
-  }
-
-  getCss() {
-    return `
-   h1,
+      <style>
+        h1,
 h2,
 th,
 td {
@@ -104,7 +78,39 @@ tbody tr:not(:last-child) td {
     border-bottom: none;
     /* sin líneas entre filas */
 }
-    `
+      </style>
+      <div class="pdf-container">
+        <h1>Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
+        <h2>Alutech S.A. de S.V.</h2>
+        <div class="estado-cuerpo">
+          ${this.renderCuerpo()}
+        </div>
+      </div>
+    `;
+
+    render(plantilla, this._root);
+  }
+
+
+  async setCuentasDeEstadoDeResultadoPorPeriodo(anio) {
+    try {
+      const response = await this.RegistroAccess.getDataCuentasDeEstadoDeResultados(anio);
+      if (!response.ok) throw new Error("Error al obtener cuentas de estadoDeResultado");
+      const data = await response.json();
+      this.ListDeCuentas = data || [];
+      this.render();
+    } catch (error) {
+      this.noticadorHandle(error, "danger")
+      this.ListDeCuentas = []
+    }
+  }
+
+  noticadorHandle(mensaje, status) {
+    this.dispatchEvent(new CustomEvent("notificacion", {
+      composed: true,
+      bubbles: true,
+      detail: { element: "botonInicio", mensaje, body: { status } }
+    }));
   }
 }
 

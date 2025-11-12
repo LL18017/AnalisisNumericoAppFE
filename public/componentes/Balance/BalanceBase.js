@@ -64,6 +64,7 @@ class BalanceBase extends HTMLElement {
     }, 0);
   }
 
+
 }
 
 export default BalanceBase;

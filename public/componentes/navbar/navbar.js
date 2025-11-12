@@ -46,7 +46,7 @@ class NavBar extends HTMLElement {
           <li @click=${() => this.CatalogoDeCuentasClick()}>Catalogo</li>
           <li @click=${() => this.EstadosFinancierosCLick()}>estados financieros</li>
           <li @click=${() => this.registroClick()}>registros</li>
-          <li @click=${() => this.RatiosFinancierosClick()}>Ratios</li>
+          <li @click=${() => this.indicadoresFinancierosClick()}>indicadores finacieros</li>
         </ul>
 
     `;
@@ -134,15 +134,15 @@ class NavBar extends HTMLElement {
     );
   }
 
-  RatiosFinancierosClick() {
+  indicadoresFinancierosClick() {
     this.buttonCerrar();
     this.dispatchEvent(
-      new CustomEvent("RatiosFinancierosClick", {
+      new CustomEvent("indicadoresFinancierosClick", {
         composed: true,
         bubbles: true,
         detail: {
-          element: "botonRatiosFinancierosClick",
-          mensaje: "boton para ratios clickeado",
+          element: "botonIndicadoresFinancierosClick",
+          mensaje: "boton para indicadores clickeado",
           body: {},
         },
       })

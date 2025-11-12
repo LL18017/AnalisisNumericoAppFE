@@ -1,4 +1,5 @@
---
+-- docker exec -i db16 psql -U postgres -d finanzas < backup_finanzas.sql
+
 -- PostgreSQL database dump
 --
 
@@ -113,7 +114,6 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 2	1	ACTIVOS
 4	1.101	Efectivos
 5	1.102	Certificados de depósitos a plazo fijo
-6	1.103	Inversiones en bonos
 7	1.104	Cuentas por cobrar a clientes
 8	1.105	Cuentas por cobrar comerciales - neto
 9	1.106	Anticipos a proveedores y otras cuentas por cobrar
@@ -168,18 +168,8 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 65	2.114	Cuentas por pagar comerciales
 66	1.000000	TOTAL ACTIVO
 67	2.000000	TOTAL PASIVO
-68	3.000000	TOTAL PATRIMONIO
 69	1.1000	TOTAL ACTIVO CORRIENTE
 70	1.2000	TOTAL ACTIVO NO CORRIENTE
-71	5.101	ingresos por ventas
-72	4.101	costo de lo vendido
-73	4.201	gastos administrativos
-74	4.202	gastos de venta
-76	5.102	otros ingresos y gastos netos
-77	4.102	provision para el impuesto sobre la renta
-78	4.103	efecto de conversion de moneda de anio
-79	4.104	provision para la aportacion solidaria
-75	4.203	ingresos (gastos) financieros, netos
 80	1.212	Cuentas por cobrar a partes relacionadas largo plazo
 81	1.213	Otras cuentas por cobrar largo plazo
 49	2.206	Certificados de inversión largo plazo
@@ -195,14 +185,37 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 96	1.214	Cuentas por cobrar a clientes largo plazo
 97	1.215	inversiones largo plazo
 98	2.117	Otros pasivos financieros
-95	1.116	Activos por impuestos corrientes
 99	2.216	Impuestos corrientes largo plazo
 100	2.118	Impuestos corrientes
 101	2.217	Otros pasivos financieros largo plazo
 102	2.218	Provisiones 
 103	3.112	Reservas de capital
 104	3.113	Resultados del periodo
-105	2.119	Acrededores comerciales y otras cuentaspor pagar
+73	4.201	Gastos administrativos
+74	4.202	Gastos de venta
+71	5.101	Ingresos por ventas
+76	5.102	Otros ingresos y gastos netos
+72	4.101	Costo de lo vendido
+77	4.102	Provision para el impuesto sobre la renta
+78	4.103	Efecto de conversion de moneda de anio
+79	4.104	Provision para la aportacion solidaria
+106	4.203	Gastos de Personal
+107	4.204	Gastos de Depreciación y Amortización
+75	4.210	Ingresos (gastos) financieros, netos
+110	4.209	Otros Ingresos (Gastos)
+109	4.208	Gastos Financieros
+108	4.207	Ingresos Financieros
+111	4.205	Perdidas por deterioro de valor de cuentas por cobrar
+95	1.116	Activos por impuestos corrientes
+68	3	PATRIMONIO
+113	4	Costos y gastos
+114	5	Ingresos
+117	6.101	Arrendamientos pagados
+116	6.102	Prestamos Bancarios Pagados
+119	6.103	Documentos por pagar pagados
+120	6.104	Obligaciones por derechos titularizados pagados
+105	2.119	Acreedores comerciales y otras cuentas por pagar
+6	1.103	Inversiones en bonos
 \.
 
 
@@ -259,7 +272,6 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 59	38	2020	19478631.00
 60	38	2021	1171548.00
 61	39	2020	2580572.00
-2543	76	2021	45737.00
 66	41	2021	8632737.00
 67	42	2020	88462039.00
 68	44	2021	114626074.00
@@ -287,8 +299,6 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2549	63	2021	59420100.00
 17	5	2021	25900000.00
 62	39	2021	7913755.00
-2537	76	2020	3506676.00
-2550	75	2020	-16236774.00
 2554	4	2022	20155298.00
 2560	8	2023	41272525.00
 2566	12	2023	141491319.00
@@ -310,8 +320,16 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2680	47	2024	68067653.00
 2686	58	2024	5540907.00
 2692	29	2024	95128624.00
+2696	71	2024	479006719.00
+2702	106	2024	-26967511.00
+2543	76	2021	5560251.00
+2720	110	2022	332863.00
+2726	74	2023	-43950554.00
+2738	119	2020	19403.00
+2744	117	2022	7583466.00
+2750	120	2023	1597637.00
+2751	76	2020	3506676.00
 2526	7	2026	10.00
-2544	75	2021	-21777725.00
 2551	79	2020	-47943.00
 2538	77	2020	-3530251.00
 2555	4	2023	12130206.00
@@ -337,10 +355,15 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2687	93	2024	56160201.00
 2693	105	2024	225126517.00
 2675	7	2024	1106932.00
+2697	72	2024	-377459424.00
+2703	107	2024	-7107482.00
+2544	75	2021	-19194840.00
+2715	71	2022	499653494.00
+2721	109	2022	-17181342.00
+2727	111	2023	-507752.00
+2739	120	2020	1810802.00
+2745	116	2022	96721311.00
 2527	66	2020	0.00
-2533	71	2020	291480410.00
-2539	71	2021	523965277.00
-2545	77	2021	-13198439.00
 2548	40	2020	8021302.00
 2552	78	2020	-5632929.00
 2556	5	2022	7000000.00
@@ -364,8 +387,17 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2682	101	2024	16811464.00
 2688	103	2024	5188768.00
 2694	15	2024	54824958.00
-2540	72	2021	-367252613.00
-2534	72	2020	-226364119.00
+2698	73	2024	-5898635.00
+2710	77	2024	-4124197.00
+2539	71	2021	525873803.00
+2545	77	2021	-14823585.00
+2533	71	2020	291480410.00
+2716	72	2022	-410331156.00
+2722	77	2022	-3960325.00
+2728	108	2023	3721720.00
+2740	117	2021	6295586.00
+2746	120	2022	1652870.00
+2734	108	2020	215604.00
 2563	15	2022	52441213.00
 2569	14	2022	6639395.00
 2575	20	2022	24658197.00
@@ -388,8 +420,17 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2683	102	2024	18192624.00
 2689	60	2024	-8973683.00
 2695	8	2024	41272525.00
+2699	74	2024	-26379749.00
+2705	108	2024	15024973.00
+2540	72	2021	-371741118.00
+2534	72	2020	-226364119.00
+2717	73	2022	-18344656.00
+2723	71	2023	478623072.00
+2729	109	2023	-22016927.00
+2735	116	2020	143137210.00
+2741	116	2021	63452712.00
+2747	119	2022	86550.00
 2535	73	2020	-7909279.00
-2541	73	2021	-16733467.00
 2558	5	2023	7400000.00
 2564	15	2023	54824958.00
 2570	14	2023	3426688.00
@@ -411,8 +452,15 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2678	44	2024	98999095.00
 2684	54	2024	119391833.00
 2690	63	2024	45523207.00
+2706	109	2024	-43089283.00
+2541	73	2021	-15547353.00
+2718	74	2022	-39712552.00
+2724	72	2023	-373545631.00
+2730	77	2023	-9341414.00
+2736	117	2020	8791750.00
+2742	119	2021	1980234.00
+2748	117	2023	9898101.00
 2536	74	2020	-30181462.00
-2542	74	2021	-36445981.00
 2559	8	2022	32581092.00
 2565	12	2022	141069442.00
 2571	17	2022	8000000.00
@@ -434,6 +482,13 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2679	45	2024	34065636.00
 2685	56	2024	169574.00
 2691	104	2024	3060981.00
+2707	110	2024	55570.00
+2542	74	2021	-42851597.00
+2719	111	2022	-397016.00
+2725	73	2023	-19651834.00
+2731	109	2020	-16452378.00
+2743	120	2021	1526271.00
+2749	116	2023	149681300.00
 \.
 
 
@@ -441,14 +496,14 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 -- Name: cuenta_idcuenta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cuenta_idcuenta_seq', 105, true);
+SELECT pg_catalog.setval('public.cuenta_idcuenta_seq', 128, true);
 
 
 --
 -- Name: registro_idregistro_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.registro_idregistro_seq', 2695, true);
+SELECT pg_catalog.setval('public.registro_idregistro_seq', 2757, true);
 
 
 --

@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import cuentaRoutes from "./routes/cuenta.routes.js";
 import registroRoutes from "./routes/registro.routes.js";
+import estadosRoutes from "./routes/estados.route.js"
 import cors from "cors";
 import bodyParser from "body-parser";
 import pdfRouter from "./routes/pdf.routes.js";
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/api/cuentas", cuentaRoutes);
 app.use("/api/registros", registroRoutes);
+app.use("/api/registros", estadosRoutes);
 app.use("/pdf", pdfRouter);
 
 

@@ -12,7 +12,12 @@ export async function generarPDF(html) {
     const pdfBuffer = await page.pdf({
         format: "A4",
         printBackground: true,
-        margin: { top: "20mm", bottom: "20mm" },
+        margin: {
+            top: '40px',
+            bottom: '40px',
+            left: '30px',
+            right: '30px'
+        }
     });
 
     await browser.close();

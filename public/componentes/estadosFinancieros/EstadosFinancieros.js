@@ -51,14 +51,13 @@ class EstadosFinancieros extends HTMLElement {
           <option value="analisis_horizontal_balance">Análisis Horizontal Balance general</option>
           <option value="analisis_horizontal_Estado_Resultados">Análisis Horizontal Estado de resultados</option>
           <option value="balance_usos_fuente">Balance de usos y fuentes</option>
-          <option value="balance_uso_aplicacion">Balance de Uso y Aplicación</option>
         </select>
 
         <label for="anioPrincipal">Año principal:</label>
-        <input type="number" id="anioPrincipal" min="1900" max="2100" placeholder="Ej. 2025" value="2021" />
+        <input type="number" id="anioPrincipal" min="1900" max="2100" placeholder="Ej. 2025" value="2025" />
 
           <label id="labelAnioSecundario" for="anioSecundario" style="display:none;">Año secundario:</label>
-          <input type="number" id="anioSecundario" min="1900" max="2100" value="2020" placeholder="Ej. 2024" style="display:none;"/>
+          <input type="number" id="anioSecundario" min="1900" max="2100" placeholder="Ej. 2024" value="2024" style="display:none;"/>
 
         <button class="btn" @click=${() => this.generarReporte()} id="generar">Generar</button>
       </div>
@@ -67,7 +66,7 @@ class EstadosFinancieros extends HTMLElement {
     render(plantilla, this._root);
   }
 
-  // 🔄 Mostrar/ocultar campo "Año secundario" según el tipo de estado
+  // Mostrar/ocultar campo "Año secundario" según el tipo de estado
   toggleAnioSecundario(e) {
     const tipo = e.target.value;
     const labelAnioSecundario = this._root.querySelector("#labelAnioSecundario");
@@ -127,11 +126,6 @@ class EstadosFinancieros extends HTMLElement {
       return;
     }
 
-    componente.tipo = tipo;
-    componente.style.display = "block";
-    componente.anioPrincipal = anioPrincipal;
-    componente.anioSecundario = anioSecundario;
-
     // Lógica especial según tipo de análisis
     if (typeof componente.setCuentasDeBalancePorPeriodo === "function") {
       if (anioSecundario) {
@@ -143,11 +137,19 @@ class EstadosFinancieros extends HTMLElement {
       console.warn(`El componente ${tipo} no tiene el método setCuentasDeBalancePorPeriodo`);
     }
 
-    if (typeof componente.render === "function") {
+    if (componente.ListDeCuentas.length !== 0) {
       componente.render();
+      componente.tipo = tipo;
+      componente.style.display = "block";
+      componente.anioPrincipal = anioPrincipal;
+      componente.anioSecundario = anioSecundario;
     } else {
-      console.warn(`El componente ${tipo} no tiene el método render`);
+      this.noticadorHandle(`El componente ${tipo} no se puede renderizar`, "danger");
+      this.atrasBtn()
+      return;
     }
+
+
   }
 
   async mostrarEstadoDeResultados(tipo, anioPrincipal, anioSecundario, componente) {
@@ -217,29 +219,22 @@ class EstadosFinancieros extends HTMLElement {
 
       if (tipo === "reporte") {
         shadowRoot = this.balance.shadowRoot || this.balance._root;
-        css = this.balance.getCss()
       } else if (tipo === "analisis_vertical_balance") {
         shadowRoot = this.balanceAnalisisVertical.shadowRoot || this.balanceAnalisisVertical._root;
-        css = this.balanceAnalisisVertical.getCss()
       } else if (tipo === "analisis_horizontal_balance") {
         shadowRoot = this.balanceAnalisisHorizontal.shadowRoot || this.balanceAnalisisHorizontal._root;
-        css = this.balanceAnalisisHorizontal.getCss()
       } else if (tipo === "balance_usos_fuente") {
         shadowRoot = this.balanceUsosFuentes.shadowRoot || this.balanceUsosFuentes._root;
-        css = this.balanceUsosFuentes.getCss()
       } else if (tipo === "estado_resultado") {
         shadowRoot = this.estadoResultados.shadowRoot || this.estadoResultados._root;
-        css = this.estadoResultados.getCss()
       } else if (tipo === "analisis_vertical_Estado_Resultados") {
         shadowRoot = this.estadoResultadosAnalisisVertical.shadowRoot || this.estadoResultadosAnalisisVertical._root;
-        css = this.estadoResultadosAnalisisVertical.getCss()
       } else if (tipo === "analisis_horizontal_Estado_Resultados") {
         shadowRoot = this.estadoResultadosAnalisisHorizontal.shadowRoot || this.estadoResultadosAnalisisHorizontal._root;
-        css = this.estadoResultadosAnalisisHorizontal.getCss()
       }
 
       if (!shadowRoot) {
-        console.error(`No se encontró el shadowRoot del componente ${tipo}`);
+        this.noticadorHandle(`No se encontró el shadowRoot del componente ${tipo}`, "danger");
         return;
       }
 
@@ -253,11 +248,7 @@ class EstadosFinancieros extends HTMLElement {
         <head>
           <meta charset="UTF-8">
           <title>${tipo}</title>
-          <style>
-            ${css}
-          </style>
-          <link rel="stylesheet" href="./main.css">
-          <link rel="stylesheet" href="./componentes/estadosFinancieros/estados.css">
+         
         </head>
         <body>
           <div id="wrapper">

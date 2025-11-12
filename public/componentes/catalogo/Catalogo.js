@@ -24,9 +24,14 @@ class Catalogo extends HTMLElement {
 
   async getData(q = "") {
     const response = await this.CuentaAccess.getData(q);
-    const data = await response.json();
-    this.cuentas = data;
-    console.log("Cuentas cargadas:", this.cuentas.length);
+    if (response.status != 200) {
+      const error = await response.json();
+      this.noticadorHandle(error.error, "danger")
+    } else {
+      const data = await response.json();
+      this.cuentas = data;
+      this.cuentasFiltradas = structuredClone(data);
+    }
   }
 
   async PostData() {
@@ -34,20 +39,24 @@ class Catalogo extends HTMLElement {
     const nombre = this._root.querySelector("#modal-nombre").value;
     const registro = { nombre, codigo };
 
+    if (!codigo || !nombre) {
+      this.noticadorHandle(`Error al crear la cuenta el nombre o codigo no deben ser nulos`, "danger");
+      return;
+    }
+
     try {
       const response = await this.CuentaAccess.createData(registro);
       if (response.ok) {
         await this.getData();
         this.render();
-        this.noticadorHandle(`✅ Cuenta "${nombre}" creada correctamente`, "success");
+        this.noticadorHandle(`Cuenta "${nombre}" creada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
       } else {
-        const errorText = await response.text();
-        this.noticadorHandle(`⚠️ Error al crear la cuenta: ${errorText}`, "danger");
+        const errorText = await response.json();
+        this.noticadorHandle(`Error al crear la cuenta: ${errorText.error}`, "danger");
       }
     } catch (error) {
-      console.error("Error en PostData:", error);
-      this.noticadorHandle("🚨 No se pudo conectar al servidor", "danger");
+      this.noticadorHandle("No se pudo conectar al servidor", "danger");
     }
   }
 
@@ -57,20 +66,25 @@ class Catalogo extends HTMLElement {
     const nombre = this._root.querySelector("#modal-nombre").value;
     const registro = { id, nombre, codigo };
 
+    if (!codigo || !nombre) {
+      this.noticadorHandle(`Error al crear la cuenta el nombre o codigo no deben ser nulos`, "danger");
+      return;
+    }
+
     try {
       const response = await this.CuentaAccess.updateData(registro, id);
       if (response.ok) {
         await this.getData();
         this.render();
-        this.noticadorHandle(`✅ Cuenta "${nombre}" modificada correctamente`, "success");
+        this.noticadorHandle(`Cuenta "${nombre}" modificada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
       } else {
-        const errorText = await response.text();
-        this.noticadorHandle(`⚠️ Error al modificar la cuenta: ${errorText}`, "danger");
+        const errorText = await response.json();
+        this.noticadorHandle(`Error al modificar la cuenta: ${errorText.error}`, "danger");
       }
     } catch (error) {
       console.error("Error en updateData:", error);
-      this.noticadorHandle("🚨 No se pudo conectar al servidor", "danger");
+      this.noticadorHandle("No se pudo conectar al servidor", "danger");
     }
   }
 
@@ -83,15 +97,15 @@ class Catalogo extends HTMLElement {
       if (response.ok) {
         await this.getData();
         this.render();
-        this.noticadorHandle(`✅ Cuenta "${nombre}" eliminada correctamente`, "success");
+        this.noticadorHandle(`Cuenta "${nombre}" eliminada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
       } else {
-        const errorText = await response.text();
-        this.noticadorHandle(`⚠️ Error al eliminar la cuenta: ${errorText}`, "danger");
+        const errorText = await response.json();
+        this.noticadorHandle(`Error al eliminar la cuenta: ${errorText.error}`, "danger");
       }
     } catch (error) {
       console.error("Error en deleteData:", error);
-      this.noticadorHandle("🚨 No se pudo conectar al servidor", "danger");
+      this.noticadorHandle("No se pudo conectar al servidor", "danger");
     }
   }
 
@@ -106,7 +120,8 @@ class Catalogo extends HTMLElement {
       <notificacion-toast id="notificador"></notificacion-toast>
       <div class="catalogoContainer">
         <h1>Catálogo de cuentas</h1>
-        <input id="buscar" type="text" placeholder="Ingrese nombre, código o ID">
+        <input id="buscar" type="text"
+         placeholder="Ingrese nombre, código o ID">
         <div class="cuentasContainer">
           <button class="btn" id="crear">Crear cuenta</button>
           <table border="1" class="tabla-cuentas">
@@ -144,9 +159,8 @@ class Catalogo extends HTMLElement {
     `;
 
     render(plantilla, this._root);
-    this.renderTabla(this.cuentas);
+    this.renderTabla(this.cuentasFiltradas);
     this.setupFiltrado();
-    this.setupModal();
     this.setupBtncrear();
   }
 
@@ -159,17 +173,27 @@ class Catalogo extends HTMLElement {
         <td>${c.nombre}</td>
       </tr>
     `).join('');
+
+    this.setupModal();
   }
 
   setupFiltrado() {
     const input = this._root.querySelector("#buscar");
-    input.addEventListener("input", async (e) => {
-      const q = e.target.value.toLowerCase();
-      await this.getData(q);
-      this.renderTabla(this.cuentas);
-      this.setupModal();
+
+    input.addEventListener("input", (e) => {
+      const texto = e.target.value.toLowerCase();
+
+      // Filtra en tiempo real (sin afectar el arreglo original)
+      this.cuentasFiltradas = this.cuentas.filter(c =>
+        c.nombre.toLowerCase().includes(texto) ||
+        c.codigo.toLowerCase().includes(texto) ||
+        String(c.idcuenta).includes(texto)
+      );
+
+      this.renderTabla(this.cuentasFiltradas);
     });
   }
+
 
   setupModal() {
     const modal = this._root.querySelector("#modal");
