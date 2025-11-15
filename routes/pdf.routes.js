@@ -10,14 +10,15 @@ const router = express.Router();
  */
 router.post("/:tipo", async (req, res) => {
     const { tipo } = req.params;
-    const { html } = req.body;
+    let { html, orientacion } = req.body;
+
 
     if (!html) {
         return res.status(400).json({ error: "Falta el contenido HTML" });
     }
 
     try {
-        const pdfBuffer = await generarPDF(html);
+        const pdfBuffer = await generarPDF(html, orientacion);
 
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(

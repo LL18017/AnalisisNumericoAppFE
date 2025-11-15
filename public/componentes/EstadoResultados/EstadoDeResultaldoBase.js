@@ -112,6 +112,30 @@ tbody tr:not(:last-child) td {
       detail: { element: "botonInicio", mensaje, body: { status } }
     }));
   }
+
+  firmas() {
+    return html`
+        <div class="firmas-container">
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Contador</p></div>
+            </p></div>
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Auditor</p></div>
+            </p></div>
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Representante Legal</p></p></div>
+            </p></div>
+
+        </p></div>
+        
+    `;
+  }
 }
 
 export default EstadoBase

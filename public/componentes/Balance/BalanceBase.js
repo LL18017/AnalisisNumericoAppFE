@@ -5,6 +5,8 @@ class BalanceBase extends HTMLElement {
   constructor() {
     super();
     this.ListDeCuentas = [];
+
+
   }
 
   connectedCallback() {
@@ -62,6 +64,30 @@ class BalanceBase extends HTMLElement {
       const saldoNumerico = parseFloat(cuenta.saldo);
       return suma + (isNaN(saldoNumerico) ? 0 : saldoNumerico);
     }, 0);
+  }
+
+  firmas() {
+    return html`
+        <div class="firmas-container">
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Contador</p></div>
+            </p></div>
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Auditor</p></div>
+            </p></div>
+
+            <div class="firma">
+                <div class="linea"><p>f. ________________________________</p></div>
+                <div class="nombre"><p>Representante Legal</p></p></div>
+            </p></div>
+
+        </p></div>
+        
+    `;
   }
 
 

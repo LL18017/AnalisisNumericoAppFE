@@ -103,6 +103,29 @@ class BalanceAnalisisHorizontal extends BalanceBase {
       .suma-total {
           order: 5;
       }
+      .firmas-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 40px;
+                margin-top: 50px;
+                width: 100%;
+                font-family: sans-serif;
+            }
+
+            .firma {
+                text-align: center;
+                flex: 1;
+            }
+
+            .linea {
+                margin-bottom: 6px;
+                white-space: nowrap;
+            }
+
+            .nombre {
+                font-weight: bold;
+            }
       </style>
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
@@ -123,6 +146,7 @@ class BalanceAnalisisHorizontal extends BalanceBase {
           ${this.renderPasivosPatrimonio()}
         </tbody>
         </table>
+          ${this.firmas()}
       </div>
     `;
 

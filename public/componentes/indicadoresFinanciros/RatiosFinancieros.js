@@ -36,8 +36,7 @@ class RatiosFinancieros extends HTMLElement {
   render() {
     const link = html`
       <link rel="stylesheet" href="./main.css" />
-      <link rel="stylesheet" href="./componentes/indicadoresFinanciros/ratios.css" />
-    `;
+      `;
 
     if (!this.data) {
       render(
@@ -55,11 +54,76 @@ class RatiosFinancieros extends HTMLElement {
       maximumFractionDigits: 5
     });
     const plantilla = html`
+${link} 
+
+    <style>
+      :host {
+    display: block;
+    padding: 1.5rem;
+    font-family: Arial, sans-serif;
+}
+
+h3,
+p {
+    color: var(--color--secundario);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color--claro);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: left;
+    font-size: var(--fuente-texto);
+    color: var(--color--oscuro);
+}
+
+th {
+    background: #273f6e;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: var(--fuente-texto);
+}
+
+tr:nth-child(even) {
+    background-color: #f7f9fc;
+}
+
+tr:hover {
+    background-color: rgba(12, 34, 156, 0.08);
+}
+
+button {
+    background: var(--color--principal);
+    color: var(--color--claro);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: var(--fuente-texto-pequenio);
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background: var(--color--secundario);
+    transform: scale(1.05);
+
+}
+    </style>
     <h3>Ratios Financieros - Año ${this.anio}</h3>
   <table>
     ${Object.keys(this.data).map(
       (categoria) => html`
-      ${link}
         <thead>
           <tr>
             <th colspan="2">${categoria}</th>

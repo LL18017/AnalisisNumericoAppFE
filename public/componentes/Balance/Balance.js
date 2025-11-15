@@ -32,8 +32,6 @@ class Balance extends BalanceBase {
     const plantilla = html`
       ${link}
       <style>
-        :host{}
-
               h1,
       h2,
       span,
@@ -43,7 +41,6 @@ class Balance extends BalanceBase {
           color: var(--color--oscuro);
           text-align: center;
       }
-
       td,th{
          text-align: left;
          padding:0 8px;
@@ -106,13 +103,37 @@ class Balance extends BalanceBase {
       .suma-total {
           order: 5;
       }
+
+      .firmas-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 40px;
+                margin-top: 50px;
+                width: 100%;
+                font-family: sans-serif;
+            }
+
+            .firma {
+                text-align: center;
+                flex: 1;
+            }
+
+            .linea {
+                margin-bottom: 6px;
+                white-space: nowrap;
+            }
+
+            .nombre {
+                font-weight: bold;
+            }
       </style>
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
       <h2>Balance al 31 de diciembre de ${this.anioPrincipal}</h2>
 
       <div class="balance-cuerpo">
-       <table tabla-balance>
+       <table class="tabla-balance">
           <thead >
           <tr>
             <th>Cuenta</th>
@@ -124,6 +145,7 @@ class Balance extends BalanceBase {
           ${this.renderPasivosPatrimonio()}
         </tbody>
         </table>
+        ${this.firmas()}
       </div>
     `;
 
@@ -235,75 +257,6 @@ class Balance extends BalanceBase {
   }
 
 
-
-  getCss() {
-
-    return `
-h1,
-  h2,
-  span,
-  th,
-  td,
-  p {
-  color: var(--color--oscuro);
-  text - align: center;
-}
-
-        .tittle {
-  padding: 20px;
-  text - align: start;
-}
-
-
-        .balance - cuerpo {
-  display: flex;
-  flex - direction: column;
-  gap: 12px;
-  /* espacio entre filas y columnas */
-  width: 100 %;
-  margin: 0 auto;
-  /* centra horizontalmente */
-}
-
-        .balance - cuerpo >* {
-  max- width: 100 %;
-box - sizing: border - box;
-        }
-
-
-        .tabla - balance {
-  border - collapse: collapse;
-  width: auto;
-  table - layout: fixed;
-  /* asegura que las columnas tengan el mismo ancho */
-}
-
-        .tabla - balance th,
-        .tabla - balance td {
-  padding: 8px;
-  text - align: left;
-  width: 100 %;
-  height: 40px;
-  white - space: nowrap;
-}
-
-        .activos {
-  order: 1;
-}
-
-        .totalActivos {
-  order: 2;
-}
-
-        .PasivosPatrimonio {
-  order: 3;
-}
-
-        .totactPasivoPatrimonio {
-  order: 4;
-}
-`
-  }
 
 }
 

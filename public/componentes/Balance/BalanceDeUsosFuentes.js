@@ -103,6 +103,7 @@ class BalanceDeUsosFuentes extends BalanceBase {
       .suma-total {
           order: 5;
       }
+      
       </style>
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
@@ -125,6 +126,7 @@ class BalanceDeUsosFuentes extends BalanceBase {
           ${this.renderSumaTotal()}
         </tbody>
         </table>
+          ${this.firmas()}
     </div>
     `;
 

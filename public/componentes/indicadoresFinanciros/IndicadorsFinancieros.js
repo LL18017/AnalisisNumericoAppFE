@@ -7,6 +7,7 @@ class Indicadores extends HTMLElement {
     this.RegistroAccess = new RegistroAccess();
     this._root = this.attachShadow({ mode: "open" });
     this.ratios = document.createElement("ratios-financieros");
+    this.analisisDupont = document.createElement("analisis-dupont");
 
 
     // Variables principales
@@ -82,6 +83,7 @@ class Indicadores extends HTMLElement {
         <button id="btnDescargar" class="btn_estados" @click=${() => this.exportToPDF()}>Descargar</button>
       </div>
       ${this.ratios}
+      ${this.analisisDupont}
 
       <div class="formulario-ratios">
         <h2>Generar Indicador Financiero</h2>
@@ -163,19 +165,30 @@ class Indicadores extends HTMLElement {
 
     this.tipo = tipo;
     this.anioPrincipal = anioPrincipal;
-    this.data = await this.setCuentasRatios(anioPrincipal);
+    const dataCompleta = await this.setCuentasRatios(anioPrincipal);
 
-    if (!this.data || Object.keys(this.data).length === 0) {
+    if (!dataCompleta || Object.keys(dataCompleta).length === 0) {
       this.noticadorHandle(`No se pudo generar: ${tipo}`, "danger");
       this.atrasBtn();
       return;
     }
+
+    // Separar dupont del resto
+    const { dupont, ...ratios } = dataCompleta;
+
+    this.dupont = dupont;  // solo dupont
+    this.data = ratios;
 
     if (this.tipo === "ratios") {
       this.ratios.anio = anioPrincipal;
       this.ratios.data = structuredClone(this.data);
       this.ratios.render();
       this.ratios.style.display = "block"
+    } else {
+      this.analisisDupont.dupont = structuredClone(this.dupont);
+      this.analisisDupont.anio = anioPrincipal;
+      this.analisisDupont.render();
+      this.analisisDupont.style.display = "block"
     }
 
     this.actualizarElementosVisibles();
@@ -208,7 +221,8 @@ class Indicadores extends HTMLElement {
     const btnAtras = this._root.querySelector("#btnAtras");
     const btnDetalle = this._root.querySelector("#btnDetalle");
     const btnDescargar = this._root.querySelector("#btnDescargar");
-    this.ratios.style.display = "none"
+    this.ratios.style.display = "none";
+    this.analisisDupont.style.display = "none";
     formulario.style.display = "flex";
     btnAtras.style.display = "none";
     btnDescargar.style.display = "none";
@@ -238,14 +252,13 @@ class Indicadores extends HTMLElement {
 
     try {
       let shadowRoot;
-      let css = ""
+      let orientacion = "portrait"; // valor por defecto
 
       if (tipo === "ratios") {
         shadowRoot = this.ratios.shadowRoot || this.ratios._root;
-        css = this.ratios.getCss()
-      } else if (tipo === "analisis_vertical_balance") {
-        shadowRoot = this.balanceAnalisisVertical.shadowRoot || this.balanceAnalisisVertical._root;
-        css = this.balanceAnalisisVertical.getCss()
+      } else {
+        shadowRoot = this.analisisDupont.shadowRoot || this.analisisDupont._root;
+        orientacion = "landscape";   // 👈 SOLO DUPONT EN HORIZONTAL
       }
 
       if (!shadowRoot) {
@@ -253,42 +266,35 @@ class Indicadores extends HTMLElement {
         return;
       }
 
-
-      // Obtenemos el HTML interno del shadow DOM
       const contenidoHTML = shadowRoot.innerHTML;
 
-      // Construimos el documento HTML completo para Puppeteer
       const html = `
       <html>
         <head>
           <meta charset="UTF-8">
           <title>${tipo}</title>
-          <style>
-            ${css}
-          </style>
           <link rel="stylesheet" href="./main.css">
           <link rel="stylesheet" href="./componentes/estadosFinancieros/estados.css">
         </head>
         <body>
-          <div id="wrapper">
-            ${contenidoHTML}
-          </div>
+          <div id="wrapper">${contenidoHTML}</div>
         </body>
       </html>
     `;
 
-      // Enviamos el HTML al backend (endpoint Puppeteer)
       const response = await fetch(`/pdf/${tipo}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ html }),
+        body: JSON.stringify({
+          html,
+          orientacion // 👈 SE ENVÍA AL BACKEND
+        }),
       });
 
       if (!response.ok) {
         throw new Error(`Error al generar el PDF: ${response.statusText}`);
       }
 
-      // Recibimos el PDF y lo descargamos
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
@@ -300,10 +306,12 @@ class Indicadores extends HTMLElement {
       a.remove();
 
       window.URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error("Error exportando PDF:", error);
     }
   }
+
 }
 
 customElements.define("indicadores-financieros", Indicadores);

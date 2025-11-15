@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 
-export async function generarPDF(html) {
+export async function generarPDF(html, orientacion) {
+
     const browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox"],
@@ -17,7 +18,8 @@ export async function generarPDF(html) {
             bottom: '40px',
             left: '30px',
             right: '30px'
-        }
+        },
+        landscape: orientacion === "landscape",
     });
 
     await browser.close();

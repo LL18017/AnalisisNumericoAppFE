@@ -38,6 +38,8 @@ h2 {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    flex-direction: column;
+    align-items: center;
 }
 
 .tabla-estado {
@@ -69,12 +71,37 @@ tbody tr:not(:last-child) td {
     border-bottom: none;
     /* sin líneas entre filas */
 }
+.firmas-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 40px;
+                margin-top: 50px;
+                width: 100%;
+                font-family: sans-serif;
+            }
+
+            .firma {
+                text-align: center;
+                flex: 1;
+            }
+
+            .linea {
+                margin-bottom: 6px;
+                white-space: nowrap;
+            }
+
+            .nombre {
+                font-weight: bold;
+            }
+
       </style>
       <div class="pdf-container">
         <h1>Estado de Resultados al 31 de diciembre de ${this.anioPrincipal}</h1>
         <h2>Alutech S.A. de S.V.</h2>
         <div class="estado-cuerpo">
           ${this.renderCuerpo()}
+          ${this.firmas()}
         </div>
       </div>
     `;

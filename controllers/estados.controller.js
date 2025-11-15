@@ -511,6 +511,8 @@ export const getResumenCuentasParaRatio = async (req, res) => {
             ratiosEndeudamiento["Multiplicador de apalancamiento financiero (MAF)"]
         );
 
+        const dupont = obtenerDupont(utilidadNeta, ingresosPorVentas, totalActivo, (totalPasivo + totalPatrimonio), totalPatrimonio)
+
         // 7. Armar objeto de salida
         const cuentas = {
             "Activo Corriente": totalActivoCorriente,
@@ -557,7 +559,8 @@ export const getResumenCuentasParaRatio = async (req, res) => {
             ratiosLiquidez,
             ratiosActividad,
             ratiosEndeudamiento,
-            ratiosRendimiento
+            ratiosRendimiento,
+            dupont
         });
 
     } catch (error) {
@@ -669,3 +672,80 @@ const obtenerRatiosRendimiento = (utilidadBruta, utilidadOperativa, utilidadNeta
         "Retorno sobre el patrimonio (ROE)": dividirSeguro(utilidadNeta, activoTotal) * maf,
     };
 };
+
+const obtenerDupont = (utilidadNeta, ingresosPorVentas, activosTotales, totalPasivoPatrimonio,
+    totalPatrimonio) => {
+    utilidadNeta = Number(utilidadNeta);
+    ingresosPorVentas = Number(ingresosPorVentas);
+    activosTotales = Number(activosTotales);
+    totalPasivoPatrimonio = Number(totalPasivoPatrimonio);
+    totalPatrimonio = Number(totalPatrimonio);
+
+    const margenDeUtilidadNeta = utilidadNeta / ingresosPorVentas;
+    const rotacionActivo = ingresosPorVentas / activosTotales;
+    const ROA = margenDeUtilidadNeta * rotacionActivo;
+
+    const MAF = totalPasivoPatrimonio / totalPatrimonio;
+
+    const ROE = MAF * ROA;
+
+
+    return {
+        "nombreCuenta": "ROE",
+        "saldo": ROE,
+        "detalle": [
+            {
+                "nombreCuenta": "ROA",
+                "saldo": ROA,
+                "detalle": [
+                    {
+                        "nombreCuenta": "Margen de utilidad neta",
+                        "saldo": margenDeUtilidadNeta,
+                        "detalle": [
+                            {
+                                "nombreCuenta": "Utilidda neta",
+                                "saldo": utilidadNeta,
+                            },
+                            {
+                                "nombreCuenta": "Ingresos por venta",
+                                "saldo": ingresosPorVentas,
+                            }
+                        ]
+                    },
+                    {
+                        "nombreCuenta": "Rotacion de activos",
+                        "saldo": rotacionActivo,
+                        "detalle": [
+                            {
+                                "nombreCuenta": "Ingresos por venta",
+                                "saldo": ingresosPorVentas,
+                            },
+                            {
+                                "nombreCuenta": "Activos totales",
+                                "saldo": activosTotales,
+                            },
+                        ]
+                    }
+
+                ]
+
+            },
+            {
+                "nombreCuenta": "MAF",
+                "saldo": MAF,
+                "detalle": [
+                    {
+                        "nombreCuenta": "Total patrimonio",
+                        "saldo": totalPatrimonio,
+                    },
+                    {
+                        "nombreCuenta": "Total patrimonio y capital",
+                        "saldo": totalPasivoPatrimonio,
+                    }
+                ]
+
+
+            }
+        ]
+    }
+}

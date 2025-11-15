@@ -1,7 +1,8 @@
 import { html, render } from "../../js/terceros/lit-html.js";
 import RegistroAccess from "../../control/RegistrosAccess.js";
+import BalanceBase from "./BalanceBase.js";
 
-class BalanceAnalisisVertical extends HTMLElement {
+class BalanceAnalisisVertical extends BalanceBase {
   constructor() {
     super();
     this._root = this.attachShadow({ mode: "open" });
@@ -13,7 +14,7 @@ class BalanceAnalisisVertical extends HTMLElement {
     this.render();
   }
 
-  // ⚠️ NO se modifica esta función
+  //  NO se modifica esta función
   async setCuentasDeBalancePorPeriodo(anio) {
     try {
       const response = await this.RegistroAccess.getDataCuentasDeBalance(anio);
@@ -109,6 +110,29 @@ class BalanceAnalisisVertical extends HTMLElement {
       .suma-total {
           order: 5;
       }
+      .firmas-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 40px;
+                margin-top: 50px;
+                width: 100%;
+                font-family: sans-serif;
+            }
+
+            .firma {
+                text-align: center;
+                flex: 1;
+            }
+
+            .linea {
+                margin-bottom: 6px;
+                white-space: nowrap;
+            }
+
+            .nombre {
+                font-weight: bold;
+            }
       </style>
        <h1>Balance General analisis vertical</h1>
       <h2>Alutech SA DE SV</h2>
@@ -128,6 +152,7 @@ class BalanceAnalisisVertical extends HTMLElement {
           ${this.renderPasivosPatrimonio()}
         </tbody>
         </table>
+          ${this.firmas()}
       </div>
     `;
 
@@ -230,7 +255,7 @@ class BalanceAnalisisVertical extends HTMLElement {
             <tr>
               <td style=${estilo}>${cuenta.nombre_cuenta}</td>
               <td style=${estilo}>
-                ${cuenta.saldo == null ? "" : `$ ${formato.format(cuenta.saldo_)}`}
+                ${cuenta.saldo == null ? "" : `$ ${formato.format(cuenta.saldo)}`}
               </td>
               <td style=${estilo}>
                  ${cuenta.saldo == null || !total ? "" :
