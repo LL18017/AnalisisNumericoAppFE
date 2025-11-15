@@ -111,9 +111,11 @@ export const buscarCuenta = async (req, res) => {
 export const createCuenta = async (req, res) => {
   try {
     const { codigo, nombre } = req.body;
+
+    const nombreNormalizado = normalizarNombre(nombre);
     const result = await pool.query(
       "INSERT INTO cuenta (codigo, nombre) VALUES ($1, $2) RETURNING *",
-      [codigo, nombre]
+      [codigo, nombreNormalizado]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -127,6 +129,7 @@ export const createCuenta = async (req, res) => {
   }
 };
 
+
 // Actualizar cuenta
 
 export const updateCuenta = async (req, res) => {
@@ -134,12 +137,14 @@ export const updateCuenta = async (req, res) => {
     const { id } = req.params;
     const { codigo, nombre } = req.body;
 
+    const nombreNormalizado = normalizarNombre(nombre);
+
     // Obtener la cuenta actual
     const { rows } = await pool.query("SELECT nombre FROM cuenta WHERE idCuenta = $1", [id]);
     if (rows.length === 0)
       return res.status(404).json({ message: "Cuenta no encontrada" });
 
-    const nombreActual = rows[0].nombre;
+    const nombreActual = normalizarNombre(rows[0].nombre);
 
     // Verificar si pertenece al listado protegido
     const esProtegida = cuentasProtegidas.some(
@@ -156,7 +161,7 @@ export const updateCuenta = async (req, res) => {
     // Actualización normal (si pasa las validaciones)
     const result = await pool.query(
       "UPDATE cuenta SET codigo = $1, nombre = $2 WHERE idCuenta = $3 RETURNING *",
-      [codigo, nombre, id]
+      [codigo, nombreNormalizado, id]
     );
 
     if (result.rowCount === 0)
@@ -211,3 +216,10 @@ export const deleteCuenta = async (req, res) => {
     }
   }
 };
+
+const normalizarNombre = (texto) => {
+  if (!texto) return "";
+  const limpio = texto.trim().toLowerCase();
+  return limpio.charAt(0).toUpperCase() + limpio.slice(1);
+};
+

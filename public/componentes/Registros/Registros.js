@@ -85,7 +85,7 @@ class Registros extends HTMLElement {
           ${this.cuentasFiltradas.length > 0
                 ? html`<ul>
                     ${this.cuentasFiltradas.map(
-                    c => html`<li @click=${() => this.seleccionarCuenta(c)}>${c.nombre}</li>`
+                    c => html`<li @click=${() => this.seleccionarCuenta(c)}>${c.codigo} - ${c.nombre}</li>`
                 )}
                   </ul>`
                 : ""}
@@ -143,6 +143,7 @@ class Registros extends HTMLElement {
         if (response.ok) {
             this.noticadorHandle("Registro guardado correctamente", "success");
             this.limpiarFormulario();
+            this.render();
         } else {
             try {
                 const errorData = await response.json();
@@ -211,6 +212,7 @@ class Registros extends HTMLElement {
             if (response.ok) {
                 this.noticadorHandle("Registro modificado correctamente", "success");
                 this.limpiarFormulario();
+                this.render();
             } else {
                 const errorData = await response.json();
                 const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";
@@ -235,6 +237,7 @@ class Registros extends HTMLElement {
             if (response.ok) {
                 this.noticadorHandle("Registro eliminado correctamente", "success");
                 this.limpiarFormulario();
+                this.render();
             } else {
                 const errorData = await response.json();
                 const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";

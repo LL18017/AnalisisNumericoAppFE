@@ -26,23 +26,22 @@ class BalanceDeUsosFuentes extends BalanceBase {
     render() {
         const link = html`
       <link rel="stylesheet" href="./main.css" />
-      <link rel="stylesheet" href="./componentes/Balance/balanceReporte.css" />
     `;
 
         const plantilla = html`
       ${link}
       <style>
-
-               h1,
-      h2,
-      span,
-      th,
-      td,
-      p {
-          color: var(--color--oscuro);
-          text-align: center;
-      }
-      td,th{
+          h1,
+          h2,
+          span,
+          th,
+          td,
+          p {
+              color: var(--color--oscuro);
+              text-align: center;
+            }
+            td,th{
+          font-size: 10px;
          text-align: left;
          padding:0 8px;
       }
@@ -108,12 +107,25 @@ class BalanceDeUsosFuentes extends BalanceBase {
        <h1>Balance General</h1>
       <h2>Alutech SA DE SV</h2>
       <h2>Balance de usos y fuentes al 31 de diciembre de ${this.anioPrincipal} y ${this.anioSecundario}</h2>
-
-      <div class="balance-cuerpo">
-        ${this.renderActivos()}
-        ${this.renderPasivosPatrimonio()}
-        ${this.renderSumaTotal()}
-      </div>
+   <div class="balance-cuerpo">
+        <table tabla-balance>
+          <thead >
+          <tr>
+            <th>Cuenta</th>
+            <th>Saldo ${this.anioPrincipal}</th>
+            <th>Saldo ${this.anioSecundario}</th>
+            <th>variacion</th>
+            <th>fuente</th>
+            <th>uso</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.renderActivos()}
+          ${this.renderPasivosPatrimonio()}
+          ${this.renderSumaTotal()}
+        </tbody>
+        </table>
+    </div>
     `;
 
         render(plantilla, this._root);
@@ -121,7 +133,11 @@ class BalanceDeUsosFuentes extends BalanceBase {
 
     renderActivos() {
         const cuentasAC = this.getCuentasPorCodigo("1.1");
+        cuentasAC.unshift({ "nombre_cuenta": "Activo Corriente" })
+        cuentasAC.unshift({ "nombre_cuenta": "Activo" })
+
         const cuentasANC = this.getCuentasPorCodigo("1.2");
+        cuentasANC.unshift({ "nombre_cuenta": "Activo No Corriente" })
 
         cuentasANC.push({
             nombre_cuenta: "TOTAL ACTIVOS",
@@ -131,12 +147,8 @@ class BalanceDeUsosFuentes extends BalanceBase {
 
 
         return html`
-      <div class="activos">
-        <h1 class="tittle">Activos</h1>
-        ${this.renderTabla("Activo corriente", cuentasAC, true, true)}
-        ${this.renderTabla("Activo no corriente", cuentasANC, true, false, true)}
-        
-      </div>
+        ${this.renderTabla("Activo corriente", cuentasAC, true, false, true)}
+        ${this.renderTabla("Activo no corriente", cuentasANC, false, true, true)}
     `;
     }
 
@@ -145,8 +157,20 @@ class BalanceDeUsosFuentes extends BalanceBase {
         const cuentasPC = this.getCuentasPorCodigo("2.1");
         const cuentasPNC = this.getCuentasPorCodigo("2.2");
         const cuentasCap = this.getCuentasPorCodigo("3.");
+        const total1 = this.getTotalAnio1(cuentasPC
+            .concat(cuentasPNC).concat(cuentasCap));
+        const total2 = this.getTotalAnio2(cuentasPC
+            .concat(cuentasPNC).concat(cuentasCap));
+
+
 
         let total = this.getTotal(cuentasPC.concat(...cuentasPNC))
+
+
+        cuentasPC.unshift({ "nombre_cuenta": "Pasivo Corriente" })
+        cuentasPC.unshift({ "nombre_cuenta": "Pasivo" })
+
+        cuentasPNC.unshift({ "nombre_cuenta": "Pasivo No Corriente" })
 
         cuentasPNC.push({
             nombre_cuenta: "TOTAL PASIVOS",
@@ -157,29 +181,17 @@ class BalanceDeUsosFuentes extends BalanceBase {
                 .concat(cuentasPNC))
         })
 
-        total += this.getTotal(cuentasCap);
+        cuentasCap.unshift({ "nombre_cuenta": "Patrimonio" })
         cuentasCap.push({
             nombre_cuenta: "TOTAL PASIVOS y PATRIMONIO",
-            saldo_anio1: this.getTotalAnio1(cuentasPC
-                .concat(cuentasPNC).concat(cuentasCap)),
-
-            saldo_anio2: this.getTotalAnio2(cuentasPC.concat(cuentasPNC).concat(cuentasCap))
-
+            saldo_anio1: total1,
+            saldo_anio2: total2
         })
 
-
         return html`
-      <div class="PasivosPatrimonio">
-        <div class="pasivo">
-          <h1 class="tittle">Pasivos</h1>
-          ${this.renderTabla("Pasivo corriente", cuentasPC)}
-          ${this.renderTabla("Pasivo no corriente", cuentasPNC, null, false, true)}
-        </div>
-        <div class="patrimonio">
-          <h1 class="tittle">Patrimonio</h1>
-          ${this.renderTabla("Capital", cuentasCap, null, false, true)}
-        </div>
-      </div>
+         ${this.renderTabla("Pasivo corriente", cuentasPC, false, false, false)}
+          ${this.renderTabla("Pasivo no corriente", cuentasPNC, false, true, false)}
+          ${this.renderTabla("Capital", cuentasCap, false, true, false)}
     `;
     }
 
@@ -224,89 +236,81 @@ class BalanceDeUsosFuentes extends BalanceBase {
         });
 
         return html`
-        <div class="suma-total">
-            <table class="tabla-balance">
-                <tbody>
                     <tr style="font-weight:bold; background:#f0f0f0;">
-                        <td style="width:35%;">Suma Total</td>
-                        <td colspan="4"></td>
+                        <td>Suma Total</td>
+                        <td colspan="3"></td>
                         <td>$ ${formato.format(totalUso)}</td>
                         <td>$ ${formato.format(totalFuente)}</td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
     `;
     }
 
 
-    // ---------- Render tabla simplificada ----------
-    renderTabla(titulo, cuentas, esActivo, renderHeaders, renderTotal) {
+
+    renderTabla(titulo, cuentas, renderHeaders, renderTotal, esActivo) {
         const formato = new Intl.NumberFormat("es-SV", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
 
-        const filaTotal = {
-            nombre_cuenta: `Total ${titulo}`,
-            saldo_anio1: this.getTotalAnio1(cuentas.slice(0, -1)),
-            saldo_anio2: this.getTotalAnio2(cuentas.slice(0, -1)),
+        // Crear objeto total
+        const TotalTitulo = {
+            nombre_cuenta: `TOTAL ${titulo}`
         };
 
-        // Si renderTotal es true → insertar antes del último
-        // Si no → insertar al final
+        let saldoTitulo1 = 0;
+        let saldoTitulo2 = 0;
+
         if (renderTotal) {
-            cuentas.splice(cuentas.length - 1, 0, filaTotal);
+            // Si renderTotal es true → sumar todas menos la última
+            saldoTitulo1 = this.getTotalAnio1(cuentas.slice(0, -1));
+            saldoTitulo2 = this.getTotalAnio1(cuentas.slice(0, -1));
+            TotalTitulo.saldo_anio1 = saldoTitulo1;
+            TotalTitulo.saldo_anio2 = saldoTitulo2;
+
+            // Insertar antes del último elemento
+            cuentas.splice(cuentas.length - 1, 0, TotalTitulo);
         } else {
-            cuentas.push(filaTotal);
+            // Si renderTotal es false → sumar todas las cuentas
+            saldoTitulo1 = this.getTotalAnio1(cuentas);
+            saldoTitulo2 = this.getTotalAnio2(cuentas);
+            TotalTitulo.saldo_anio1 = saldoTitulo1;
+            TotalTitulo.saldo_anio2 = saldoTitulo2;
+
+            // Agregar al final del array
+            cuentas.push(TotalTitulo);
         }
 
+        // Renderizado
         return html`
-    <table class="tabla-balance">
-      ${renderHeaders ? html`
-        <thead>
-          <tr>
-            <th style="width:35%;">Cuenta</th>
-            <th>Saldo ${this.anioPrincipal}</th>
-            <th>Saldo ${this.anioSecundario}</th>
-            <th>variacion</th>
-            <th>fuente</th>
-            <th>Uso</th>
-          </tr>
-        </thead>
-      ` : null}
-
-      <tbody>
-        <tr>
-          <td style="width:35%;">${titulo}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-
         ${cuentas.map((cuenta, index) => {
-            const esUltimo = index === cuentas.length - 1;
-            const esPenultimo = index === cuentas.length - 2;
-            const enNegrita = renderTotal ? (esUltimo || esPenultimo) : esUltimo;
+            console.log(cuenta);
 
-            const esTotal = /total/i.test(cuenta.nombre_cuenta); // ← Detecta si es total
+            // Determinar si va en negrita
+            const esNegritaBase = renderHeaders ? index < 2 : index < 1;
+            const contieneTotal = cuenta.nombre_cuenta?.toLowerCase().includes("total");
+            const estilo = (esNegritaBase || contieneTotal)
+                ? "font-weight: bold;"
+                : "";
 
+
+            const esTotal = /total/i.test(cuenta.nombre_cuenta); //  Detecta si es total
             return html`
-                <tr style=${enNegrita ? 'font-weight: bold;' : ''}>
-                <td style="width:35%;">${cuenta.nombre_cuenta}</td>
-                <td>$ ${formato.format(Number(cuenta.saldo_anio1) || 0)}</td>
-                <td>$ ${formato.format(Number(cuenta.saldo_anio2) || 0)}</td>
-                <td>$ ${formato.format(this.getDiferencia(cuenta.saldo_anio1, cuenta.saldo_anio2))}</td>
-                <td>$ ${esTotal ? "-" : this.esFuente(cuenta.saldo_anio1, cuenta.saldo_anio2, esActivo)}</td>
-                <td>$ ${esTotal ? "-" : this.esUso(cuenta.saldo_anio1, cuenta.saldo_anio2, esActivo)}</td>
-                </tr>
-            `;
+            <tr>
+              <td style=${estilo}>${cuenta.nombre_cuenta}</td>
+              <td style=${estilo}>
+                ${cuenta.saldo_anio1 == null ? "" : `$ ${formato.format(cuenta.saldo_anio1)}`}
+              </td>
+              <td style=${estilo}>
+                ${cuenta.saldo_anio2 == null ? "" : `$ ${formato.format(cuenta.saldo_anio2)}`}
+              </td>
+             <td style=${estilo}>$  ${cuenta.saldo_anio1 == null && cuenta.saldo_anio2 == null ? "-"
+                    : formato.format(this.getDiferencia(cuenta.saldo_anio1, cuenta.saldo_anio2))}</td>
+              <td style=${estilo}>$ ${esTotal ? "-" : this.esFuente(cuenta.saldo_anio1, cuenta.saldo_anio2, esActivo)}</td>
+              <td style=${estilo}>$ ${esTotal ? "-" : this.esUso(cuenta.saldo_anio1, cuenta.saldo_anio2, esActivo)}</td>
+            </tr>
+          `;
         })}
-
-      </tbody>
-    </table>
   `;
     }
 
@@ -360,80 +364,6 @@ class BalanceDeUsosFuentes extends BalanceBase {
     getTotalAnio2(cuentas) {
         return cuentas.map(c => Number(c.saldo_anio2) || 0)
             .reduce((suma, saldo) => suma + saldo, 0)
-    }
-
-
-
-    getCss() {
-
-        return `
-         h1,
-      h2,
-      span,
-      th,
-      td,
-      p {
-          color: var(--color--oscuro);
-          text-align: center;
-      }
-
-      .tittle {
-          padding: 20px;
-          text-align: start;
-      }
-
-
-      .balance-cuerpo {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          /* espacio entre filas y columnas */
-          width: 100%;
-          margin: 0 auto;
-          /* centra horizontalmente */
-      }
-
-      .balance-cuerpo>* {
-          max-width: 100%;
-          box-sizing: border-box;
-      }
-
-
-      .tabla-balance {
-          border-collapse: collapse;
-          width: auto;
-          table-layout: fixed;
-          /* asegura que las columnas tengan el mismo ancho */
-      }
-
-      .tabla-balance th,
-      .tabla-balance td {
-          padding: 8px;
-          text-align: left;
-          width: 100%;
-          height: 40px;
-          white-space: nowrap;
-      }
-
-      .activos {
-          order: 1;
-      }
-
-      .totalActivos {
-          order: 2;
-      }
-
-      .PasivosPatrimonio {
-          order: 3;
-      }
-
-      .totactPasivoPatrimonio {
-          order: 4;
-      }
-      .suma-total {
-          order: 4;
-      }
-            `
     }
 
 }

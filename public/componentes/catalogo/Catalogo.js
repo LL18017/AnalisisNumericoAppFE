@@ -48,7 +48,9 @@ class Catalogo extends HTMLElement {
       const response = await this.CuentaAccess.createData(registro);
       if (response.ok) {
         await this.getData();
+        this.limpiar();
         this.render();
+        this.setupModal();
         this.noticadorHandle(`Cuenta "${nombre}" creada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
       } else {
@@ -75,6 +77,7 @@ class Catalogo extends HTMLElement {
       const response = await this.CuentaAccess.updateData(registro, id);
       if (response.ok) {
         await this.getData();
+        this.limpiar();
         this.render();
         this.noticadorHandle(`Cuenta "${nombre}" modificada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
@@ -96,6 +99,7 @@ class Catalogo extends HTMLElement {
       const response = await this.CuentaAccess.deleteData(id);
       if (response.ok) {
         await this.getData();
+        this.limpiar();
         this.render();
         this.noticadorHandle(`Cuenta "${nombre}" eliminada correctamente`, "success");
         this._root.querySelector("#modal").style.display = "none";
@@ -208,11 +212,19 @@ class Catalogo extends HTMLElement {
         if (!cuenta) return;
 
         modal.style.display = "flex";
+
+        // Activar botones correctos al seleccionar una cuenta
+        this._root.querySelector("#guardar").style.display = "none";
+        this._root.querySelector("#eliminar").style.display = "block";
+        this._root.querySelector("#modificar").style.display = "block";
+
+        // Cargar datos
         this._root.querySelector("#modal-id").value = cuenta.idcuenta;
         this._root.querySelector("#modal-codigo").value = cuenta.codigo;
         this._root.querySelector("#modal-nombre").value = cuenta.nombre;
       });
     });
+
 
     cerrarModal.addEventListener("click", () => {
       modal.style.display = "none";
@@ -238,6 +250,11 @@ class Catalogo extends HTMLElement {
       this._root.querySelector("#modal-codigo").value = "";
       this._root.querySelector("#modal-nombre").value = "";
     });
+  }
+
+  limpiar() {
+    const input = this._root.querySelector("#buscar");
+    input.value = "";
   }
 
   noticadorHandle(mensaje, status) {

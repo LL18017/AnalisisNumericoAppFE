@@ -138,11 +138,11 @@ class EstadosFinancieros extends HTMLElement {
     }
 
     if (componente.ListDeCuentas.length !== 0) {
-      componente.render();
       componente.tipo = tipo;
       componente.style.display = "block";
       componente.anioPrincipal = anioPrincipal;
       componente.anioSecundario = anioSecundario;
+      componente.render();
     } else {
       this.noticadorHandle(`El componente ${tipo} no se puede renderizar`, "danger");
       this.atrasBtn()
@@ -215,7 +215,6 @@ class EstadosFinancieros extends HTMLElement {
 
     try {
       let shadowRoot;
-      let css = ""
 
       if (tipo === "reporte") {
         shadowRoot = this.balance.shadowRoot || this.balance._root;

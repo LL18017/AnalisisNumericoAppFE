@@ -230,7 +230,7 @@ class BalanceAnalisisVertical extends HTMLElement {
             <tr>
               <td style=${estilo}>${cuenta.nombre_cuenta}</td>
               <td style=${estilo}>
-                ${cuenta.saldo == null ? "" : `$ ${formato.format(cuenta.saldo)}`}
+                ${cuenta.saldo == null ? "" : `$ ${formato.format(cuenta.saldo_)}`}
               </td>
               <td style=${estilo}>
                  ${cuenta.saldo == null || !total ? "" :

@@ -1,0 +1,34 @@
+#crear registros en la db
+# docker exec -i db16 psql -U postgres -d finanzas < backup_finanzas.sql
+
+# crear en backpUp
+# docker exec -t db16 pg_dump -U postgres -d finanzas > backup_finanzas.sql
+
+services:
+  db16:
+    image: postgres:16-alpine
+    container_name: db16
+    environment:
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/docker/volumes/postgresql16/data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+  pgadmin4_16:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_16
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ll18017@ues.edu.sv
+      PGADMIN_DEFAULT_PASSWORD: 12345
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge

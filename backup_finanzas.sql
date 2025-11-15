@@ -1,5 +1,4 @@
--- docker exec -i db16 psql -U postgres -d finanzas < backup_finanzas.sql
-
+--
 -- PostgreSQL database dump
 --
 
@@ -111,7 +110,6 @@ ALTER TABLE ONLY public.registro ALTER COLUMN idregistro SET DEFAULT nextval('pu
 --
 
 COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
-2	1	ACTIVOS
 4	1.101	Efectivos
 5	1.102	Certificados de depósitos a plazo fijo
 7	1.104	Cuentas por cobrar a clientes
@@ -123,7 +121,9 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 13	1.110	Gastos pagados por anticipado
 14	1.111	Anticipos al impuesto sobre la renta
 15	1.112	Otras cuentas por cobrar
+66	1.000000	Total activo
 17	1.201	Certificados de depósitos a plazo fijo largo plazo
+69	1.1000	Total activo corriente
 19	1.202	Inversiones en bonos largo plazo
 20	1.203	Inversiones en acciones largo plazo
 21	1.204	Propiedades de inversión largo plazo 
@@ -148,9 +148,12 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 40	2.112	Otras cuentas y gastos acumulados por pagar
 41	2.113	Otras cuentas por pagar
 42	2.201	Préstamos por pagar a largo plazo 
+2	1	Activos
 44	2.202	Prestamos bancarios por pagar largo plazo
 45	2.203	Arrendamientos por pagar a largo plazo
+70	1.2000	Total activo no corriente
 47	2.204	Obligaciones por derechos titularizados largo plazo
+67	2.000000	Total pasivo
 50	2.207	Provisión para indemnizaciones laborales
 51	2.208	Documentos por pagar a largo plazo
 52	2.209	pasivos por beneficios post empleo
@@ -166,10 +169,6 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 63	3.109	Utilidades acumuladas
 64	3.110	Participaciones no controladoras
 65	2.114	Cuentas por pagar comerciales
-66	1.000000	TOTAL ACTIVO
-67	2.000000	TOTAL PASIVO
-69	1.1000	TOTAL ACTIVO CORRIENTE
-70	1.2000	TOTAL ACTIVO NO CORRIENTE
 80	1.212	Cuentas por cobrar a partes relacionadas largo plazo
 81	1.213	Otras cuentas por cobrar largo plazo
 49	2.206	Certificados de inversión largo plazo
@@ -224,7 +223,6 @@ COPY public.cuenta (idcuenta, codigo, nombre) FROM stdin;
 --
 
 COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
-13	4	2025	67.00
 2525	66	2026	0.00
 14	4	2020	11003092.00
 15	4	2021	10840865.00
@@ -363,6 +361,7 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2727	111	2023	-507752.00
 2739	120	2020	1810802.00
 2745	116	2022	96721311.00
+2759	114	2025	1.00
 2527	66	2020	0.00
 2548	40	2020	8021302.00
 2552	78	2020	-5632929.00
@@ -430,6 +429,7 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2735	116	2020	143137210.00
 2741	116	2021	63452712.00
 2747	119	2022	86550.00
+2761	7	2027	90.00
 2535	73	2020	-7909279.00
 2558	5	2023	7400000.00
 2564	15	2023	54824958.00
@@ -460,6 +460,7 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2736	117	2020	8791750.00
 2742	119	2021	1980234.00
 2748	117	2023	9898101.00
+2762	109	2025	3.00
 2536	74	2020	-30181462.00
 2559	8	2022	32581092.00
 2565	12	2022	141069442.00
@@ -489,6 +490,8 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 2731	109	2020	-16452378.00
 2743	120	2021	1526271.00
 2749	116	2023	149681300.00
+2763	29	2025	1.00
+2764	54	2025	6.00
 \.
 
 
@@ -496,14 +499,14 @@ COPY public.registro (idregistro, idcuenta, anio, saldo) FROM stdin;
 -- Name: cuenta_idcuenta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cuenta_idcuenta_seq', 128, true);
+SELECT pg_catalog.setval('public.cuenta_idcuenta_seq', 147, true);
 
 
 --
 -- Name: registro_idregistro_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.registro_idregistro_seq', 2757, true);
+SELECT pg_catalog.setval('public.registro_idregistro_seq', 2764, true);
 
 
 --

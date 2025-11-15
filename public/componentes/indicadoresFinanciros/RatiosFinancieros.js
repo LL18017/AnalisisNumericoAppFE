@@ -50,6 +50,10 @@ class RatiosFinancieros extends HTMLElement {
 
 
     ["cuentas", "Año"].forEach((k) => delete this.data[k]);
+    const formato = new Intl.NumberFormat("es-SV", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 5
+    });
     const plantilla = html`
     <h3>Ratios Financieros - Año ${this.anio}</h3>
   <table>
@@ -70,7 +74,7 @@ class RatiosFinancieros extends HTMLElement {
         ([nombre, valor]) => html`
               <tr>
                 <td>${nombre}</td>
-                <td>${valor}</td>
+                <td>${formato.format(valor)}</td>
               </tr>
             `
       )}
