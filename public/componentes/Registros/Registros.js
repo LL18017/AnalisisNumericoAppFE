@@ -10,7 +10,7 @@ class Registros extends HTMLElement {
         this._nombreCuentaSelecionada = "";
         this._idCuentaSelecionada = null;
         this._anio = new Date().getFullYear(); // Por defecto año actual
-        this._saldo = 0.0;
+        this._saldo = "";
         this._idRegistro = null;
 
         this.CuentaAccess = new CuentaAccess();
@@ -145,6 +145,7 @@ class Registros extends HTMLElement {
             this.limpiarFormulario();
             this.render();
         } else {
+
             try {
                 const errorData = await response.json();
                 const mensaje = errorData.error || errorData.message || "❌ Error al guardar el registro.";
@@ -173,7 +174,7 @@ class Registros extends HTMLElement {
             if (!response.ok) {
                 const errorData = await response.json();
                 const mensaje = errorData.error || errorData.message || "Error al guardar el registro.";
-
+                this.limpiarFormulario();
                 this.noticadorHandle(mensaje, "danger");
                 return;
             }
@@ -254,8 +255,9 @@ class Registros extends HTMLElement {
 
         this._nombreCuentaSelecionada = "";
         this._idCuentaSelecionada = null;
-        this._anio = new Date().getFullYear();
-        this._saldo = 0.0;
+        // this._anio = new Date().getFullYear();
+        this._anio = "";
+        this._saldo = "";
         this._idRegistro = null;
         this.cuentasFiltradas = [];
         this.render();
